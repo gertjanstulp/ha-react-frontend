@@ -1,2 +1,2 @@
-graft hacs_frontend
+graft react_frontend
 global-exclude *.py[cod]
