@@ -1,4 +1,5 @@
 const gulp = require("gulp");
+const css = require("rollup-plugin-import-css");
 const rollup = require("rollup");
 const http = require("http");
 const path = require("path");
@@ -60,6 +61,7 @@ const DevelopPlugins = [
             path.resolve("./homeassistant-frontend/src/components/ha-icon-picker.ts"),
         ],
     }),
+    css(),
     entrypointHashmanifest({ manifestName: "./react_frontend/manifest.json" }),
 ];
 
@@ -73,6 +75,12 @@ const inputconfig = {
     input: "./src/main.ts",
     plugins: DevelopPlugins,
     preserveEntrySignatures: false,
+    onwarn: function(warning) {
+        if ( warning.code === 'THIS_IS_UNDEFINED' ) { return; }
+        if ( warning.code === 'CIRCULAR_DEPENDENCY' ) { return; }
+        
+        console.warn( warning.message );
+    }
 };
 
 const outputconfig = (isDev) => {
@@ -83,6 +91,7 @@ const outputconfig = (isDev) => {
         entryFileNames: !isDev ? "[name]-[hash].js" : "[name]-dev.js",
         format: "es",
         intro: `const __DEMO__ = false;
+        const __DEV__ = false;
         const __SUPERVISOR__ = true;
         const __BUILD__ = "latest"`,
     };
@@ -106,6 +115,7 @@ gulp.task("rollup-develop", () => {
         plugins: inputconfig.plugins,
         output: outputconfig(true),
         preserveEntrySignatures: false,
+        onwarn: inputconfig.onwarn,
         watch: {
             include: ["./src/**"],
             chokidar: {

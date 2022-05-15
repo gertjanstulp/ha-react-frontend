@@ -1,5 +1,5 @@
 import "../homeassistant-frontend/src/resources/ha-style";
-import "./react-router";
+import "./panels/react-main-panel";
 
 import { html, PropertyValues, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -13,8 +13,9 @@ import { mainWindow } from "../homeassistant-frontend/src/common/dom/get_main_wi
 import { isNavigationClick } from "../homeassistant-frontend/src/common/dom/is-navigation-click";
 import { getStatus, websocketSubscription } from "./data/websocket";
 import { applyThemesOnElement } from "../homeassistant-frontend/src/common/dom/apply_themes_on_element";
-import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-dialog-manager";
 import { fireEvent } from "../homeassistant-frontend/src/common/dom/fire_event";
+import { PolymerElement } from "@polymer/polymer";
+import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-dialog-manager";
 
 @customElement("react-frontend")
 class ReactFrontend extends ReactElement {
@@ -26,7 +27,7 @@ class ReactFrontend extends ReactElement {
 
     protected firstUpdated(changedProps) {
         super.firstUpdated(changedProps);
-
+        
         this._applyTheme();
 
         this.react.language = this.hass.language;
@@ -41,14 +42,14 @@ class ReactFrontend extends ReactElement {
         );
         
         this.hass.connection.subscribeEvents(
-        async () => this._updateProperties("lovelace"),
-            "lovelace_updated"
+            async () => this._updateProperties("lovelace"),
+                "lovelace_updated"
         );
         this._updateProperties();
         if (this.route.path === "") {
-            navigate("/react/entry", { replace: true });
+            navigate("/react/workflows", { replace: true });
         }
-  
+   
         window.addEventListener("haptic", (ev) => {
             // @ts-ignore
             fireEvent(window.parent, ev.type, ev.detail, {
@@ -73,6 +74,10 @@ class ReactFrontend extends ReactElement {
         makeDialogManager(this, this.shadowRoot!);
     }
     
+    public willUpdate(changedProps: PropertyValues) {
+        super.willUpdate(changedProps);
+    }
+
     protected updated(changedProps: PropertyValues) {
         super.updated(changedProps);
         const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
@@ -90,28 +95,12 @@ class ReactFrontend extends ReactElement {
 
         if (prop === "all") {
             [
-                // _fetch.repositories,
-                // _fetch.configuration,
                 _fetch.status,
-                // _fetch.critical,
-                // _fetch.resources,
-                // _fetch.removed,
             ] = await Promise.all([
-                // getRepositories(this.hass),
-                // getConfiguration(this.hass),
                 getStatus(this.hass),
-                // getCritical(this.hass),
-                // getLovelaceConfiguration(this.hass),
-                // getRemovedRepositories(this.hass),
             ]);
-        // } else if (prop === "configuration") {
-        //     _fetch.configuration = await getConfiguration(this.hass);
         } else if (prop === "status") {
             _fetch.status = await getStatus(this.hass);
-        // } else if (prop === "repositories") {
-        //     _fetch.repositories = await getRepositories(this.hass);
-        // } else if (prop === "lovelace") {
-        //     _fetch.resources = await getLovelaceConfiguration(this.hass);
         }
 
         Object.keys(_fetch).forEach((update) => {
@@ -130,13 +119,33 @@ class ReactFrontend extends ReactElement {
         }
 
         return html`
-            <react-router
+            <react-main-panel
             .hass=${this.hass}
             .react=${this.react}
             .route=${this.route}
             .narrow=${this.narrow}
-            ></react-router>
+            ></react-main-panel>
         `;
+    }
+
+    
+    protected updatePageEl(el) {
+        const hass = this.hass;
+
+        if ("setProperties" in el) {
+            // As long as we have Polymer panels
+            (el as PolymerElement).setProperties({
+                hass: this.hass,
+                react: this.react,
+                route: this.route,
+                narrow: this.narrow,
+            });
+        } else {
+            el.hass = hass;
+            el.react = this.react;
+            el.route = this.route;
+            el.narrow = this.narrow;
+        }
     }
 
     static get styles() {
@@ -175,5 +184,5 @@ class ReactFrontend extends ReactElement {
           });
           this.parentElement.style.backgroundColor = "var(--primary-background-color)";
         }
-      }
+    }
 }

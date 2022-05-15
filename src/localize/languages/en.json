@@ -1,1 +1,38 @@
-{}
+{
+    "sections": {
+        "workflows": {
+            "title": "Workflows",
+            "columns": {
+                "name": "Name"
+            }
+        }
+    },
+    "ui": {
+        "panel": {
+            "workflow": {
+                "picker": {
+                    "headers": {
+                        "toggle": "Toggle",
+                        "name": "Name",
+                        "actions": "Actions",
+                        "trigger": "Trigger"
+                    },
+                    "show_info_workflow": "Info",
+                    "trace": "Trace",
+                    "no_workflows": "We couldn’t find any workflows"
+                }
+            }
+        },
+        "card":{
+            "workflow": {
+                "last_triggered": "Last triggered",
+                "trigger": "Run Actions"
+            }
+        },
+        "components": {
+            "relative_time": {
+                "never": "Never"
+            }
+        }
+    }
+}

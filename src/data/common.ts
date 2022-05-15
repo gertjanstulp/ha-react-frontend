@@ -12,7 +12,7 @@ export interface Message {
 export interface Workflow {
     id: string;
 }
-  
+
 export interface Configuration {
     categories: [string];
     country: string;
