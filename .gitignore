@@ -1,0 +1,11 @@
+node_modules
+package-lock.json
+build
+src/localize/generated.ts
+!script/build
+react_frontend/*.js
+react_frontend/*.json
+react_frontend/*.js.gz
+!react_frontend/*.py
+
+yarn-error.log
