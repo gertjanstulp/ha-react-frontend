@@ -32,10 +32,12 @@ jobs:
         run: |
           export version=${{ github.ref }}
           sed -i "s|main|${version##*/}|" ./setup.py
+          sed -i "s|main|${version##*/}|" ./setup.cfg
           sed -i "s|main|${version##*/}|" ./react_frontend/version.py
           sed -i "s|main|${version##*/}|" ./src/version.ts
 
           cat ./setup.py
+          cat ./setup.cfg
           cat ./react_frontend/version.py
           cat ./src/version.ts
 

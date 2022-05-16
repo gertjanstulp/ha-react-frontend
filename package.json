@@ -6,7 +6,8 @@
   "scripts": {
     "postinstall": "patch-package",
     "start": "./script/develop",
-    "build": "./script/build"
+    "build": "./script/build",
+    "serve": "./script/serve"
   },
   "repository": {
     "type": "git",
