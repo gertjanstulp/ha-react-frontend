@@ -6,6 +6,7 @@ src/localize/generated.ts
 react_frontend/*.js
 react_frontend/*.json
 react_frontend/*.js.gz
+react_frontend/*.css
 !react_frontend/*.py
 
 yarn-error.log

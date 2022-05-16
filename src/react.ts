@@ -1,5 +1,8 @@
 import { LitElement, PropertyValues } from "lit";
 import { property } from "lit/decorators";
+import { HASSDomEvent } from "../homeassistant-frontend/src/common/dom/fire_event";
+import { showDialog } from "../homeassistant-frontend/src/dialogs/make-dialog-manager";
+import { MoreInfoDialogParams } from "../homeassistant-frontend/src/dialogs/more-info/ha-more-info-dialog";
 import { ProvideHassLitMixin } from "../homeassistant-frontend/src/mixins/provide-hass-lit-mixin";
 import { React } from "./data/react";
 import { localize } from "./localize/localize";
@@ -7,6 +10,26 @@ import { ReactLogger } from "./tools/react-logger";
 
 export class ReactElement extends ProvideHassLitMixin(LitElement) {
     @property({ attribute: false }) public react!: React;
+
+    protected firstUpdated(changedProps: PropertyValues) {
+        super.firstUpdated(changedProps);
+        this.addEventListener("hass-more-info", (ev) => this._handleMoreInfo(ev));
+  
+        // Load it once we are having the initial rendering done.
+        import("../homeassistant-frontend/src/dialogs/more-info/ha-more-info-dialog");
+    }
+
+    private async _handleMoreInfo(ev) {
+        showDialog(
+            this,
+            this.shadowRoot!,
+            "ha-more-info-dialog",
+            {
+                entityId: ev.detail.entityId,
+            },
+            () => import("../homeassistant-frontend/src/dialogs/more-info/ha-more-info-dialog")
+        );
+    }
 
     public connectedCallback() {
         super.connectedCallback();
