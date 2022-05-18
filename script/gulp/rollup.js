@@ -61,12 +61,12 @@ const DevelopPlugins = [
         files: [
             require.resolve("@polymer/font-roboto/roboto.js"),
             require.resolve("proxy-polyfill/src/index.js"),
-            require.resolve("@polymer/paper-styles/color.js"),
-            require.resolve("@polymer/paper-styles/default-theme.js"),
-            require.resolve("@vaadin/vaadin-material-styles/typography.js"),
-            require.resolve("@vaadin/vaadin-material-styles/font-icons.js"),
+            // require.resolve("@polymer/paper-styles/color.js"),
+            // require.resolve("@polymer/paper-styles/default-theme.js"),
+            // require.resolve("@vaadin/vaadin-material-styles/typography.js"),
+            // require.resolve("@vaadin/vaadin-material-styles/font-icons.js"),
     
-            path.resolve("./homeassistant-frontend/src/resources/compatibility.ts"),
+            // path.resolve("./homeassistant-frontend/src/resources/compatibility.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon-picker.ts"),
             path.resolve("./homeassistant-frontend/src/dialogs/config-flow"),
