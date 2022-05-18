@@ -162,7 +162,6 @@ class ReactFrontend extends ReactElement {
             (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
                 ? this.hass.themes.default_dark_theme!
                 : this.hass.themes.default_theme);
-        console.log(themeName)
         options = this.hass.selectedTheme;
         if (themeName === "default" && options?.dark === undefined) {
             options = {
@@ -171,7 +170,6 @@ class ReactFrontend extends ReactElement {
         }
     
         if (this.parentElement) {
-            console.log("apply theme")
             applyThemesOnElement(this.parentElement, this.hass.themes, themeName, {
                 ...options,
                 dark: this.hass.themes.darkMode,
