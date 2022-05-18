@@ -3,7 +3,7 @@ import {
     mdiScriptText,
 } from "@mdi/js";
 import { PolymerElement } from "@polymer/polymer";
-import { CSSResultGroup, PropertyValues } from "lit";
+import { css, CSSResultGroup, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { listenMediaQuery } from "../../homeassistant-frontend/src/common/dom/media_query";
 import { HassRouterPage, RouterOptions } from "../../homeassistant-frontend/src/layouts/hass-router-page";
@@ -124,6 +124,14 @@ class ReactMainPanel extends HassRouterPage {
     static get styles(): CSSResultGroup {
         return [
             haStyle,
+            css`
+                <style>
+                    app-drawer {
+                        --app-drawer-content-container: {
+                            background-color: var(--primary-background-color, #fff);
+                        }
+                    }
+                </style>`
         ]
     }    
 }

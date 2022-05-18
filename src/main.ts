@@ -121,7 +121,6 @@ class ReactFrontend extends ReactElement {
             ></react-main-panel>
         `;
     }
-
     
     protected updatePageEl(el) {
         const hass = this.hass;
@@ -157,26 +156,27 @@ class ReactFrontend extends ReactElement {
 
     private _applyTheme() {
         let options: Partial<HomeAssistant["selectedTheme"]> | undefined;
-    
+        
         const themeName =
-          this.hass.selectedTheme?.theme ||
-          (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
-            ? this.hass.themes.default_dark_theme!
-            : this.hass.themes.default_theme);
-    
+            this.hass.selectedTheme?.theme ||
+            (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
+                ? this.hass.themes.default_dark_theme!
+                : this.hass.themes.default_theme);
+        console.log(themeName)
         options = this.hass.selectedTheme;
         if (themeName === "default" && options?.dark === undefined) {
-          options = {
-            ...this.hass.selectedTheme,
-          };
+            options = {
+                ...this.hass.selectedTheme,
+            };
         }
     
         if (this.parentElement) {
-          applyThemesOnElement(this.parentElement, this.hass.themes, themeName, {
-            ...options,
-            dark: this.hass.themes.darkMode,
-          });
-          this.parentElement.style.backgroundColor = "var(--primary-background-color)";
+            console.log("apply theme")
+            applyThemesOnElement(this.parentElement, this.hass.themes, themeName, {
+                ...options,
+                dark: this.hass.themes.darkMode,
+            });
+            this.parentElement.style.backgroundColor = "var(--primary-background-color)";
         }
     }
 }

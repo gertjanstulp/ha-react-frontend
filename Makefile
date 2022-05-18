@@ -21,5 +21,5 @@ update: ## Pull main from react/frontend
 
 update-submodule: ## Udpate submodules
 	rm -Rf homeassistant-frontend;
-	git submodule update --init --recursive --remote;
+	git submodule update;
 	script/bootstrap
