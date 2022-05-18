@@ -10,3 +10,4 @@ react_frontend/*.css
 !react_frontend/*.py
 
 yarn-error.log
+.vscode/*.log

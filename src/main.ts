@@ -19,8 +19,6 @@ import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-di
 
 @customElement("react-frontend")
 class ReactFrontend extends ReactElement {
-    @property({ attribute: false }) public hass!: HomeAssistant;
-
     @property({ attribute: false }) public narrow!: boolean;
 
     @property({ attribute: false }) public route!: Route;
@@ -74,10 +72,6 @@ class ReactFrontend extends ReactElement {
         makeDialogManager(this, this.shadowRoot!);
     }
     
-    public willUpdate(changedProps: PropertyValues) {
-        super.willUpdate(changedProps);
-    }
-
     protected updated(changedProps: PropertyValues) {
         super.updated(changedProps);
         const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
@@ -120,10 +114,10 @@ class ReactFrontend extends ReactElement {
 
         return html`
             <react-main-panel
-            .hass=${this.hass}
-            .react=${this.react}
-            .route=${this.route}
-            .narrow=${this.narrow}
+                .hass=${this.hass}
+                .react=${this.react}
+                .route=${this.route}
+                .narrow=${this.narrow}
             ></react-main-panel>
         `;
     }
@@ -186,3 +180,10 @@ class ReactFrontend extends ReactElement {
         }
     }
 }
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "react-frontend": ReactFrontend;
+    }
+}
+  

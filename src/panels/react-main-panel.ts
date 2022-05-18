@@ -3,37 +3,26 @@ import {
     mdiScriptText,
 } from "@mdi/js";
 import { PolymerElement } from "@polymer/polymer";
-import { PropertyValues } from "lit";
+import { CSSResultGroup, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { listenMediaQuery } from "../../homeassistant-frontend/src/common/dom/media_query";
 import { HassRouterPage, RouterOptions } from "../../homeassistant-frontend/src/layouts/hass-router-page";
 import { PageNavigation } from "../../homeassistant-frontend/src/layouts/hass-tabs-subpage";
+import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { React } from "../data/react";
-
-declare global {
-// for fire event
-    interface HASSDomEvents {
-        "ha-refresh-cloud-status": undefined;
-        "ha-refresh-supervisor": undefined;
-    }
-}
 
 export const reactSections: { [name: string]: PageNavigation[] } = {
     react: [
         {
-            // component: "workflow",
             path: "/react/workflow",
             name: "workflows",
-            // translationKey: "ui.panel.config.automation.caption",
             iconPath: mdiRobot,
             iconColor: "#518C43",
         },
         {
-            // component: "reaction",
             path: "/react/reaction",
             name: "reactions",
-            // translationKey: "ui.panel.config.script.caption",
             iconPath: mdiScriptText,
             iconColor: "#518C43",
         },
@@ -132,6 +121,11 @@ class ReactMainPanel extends HassRouterPage {
         }
     }
 
+    static get styles(): CSSResultGroup {
+        return [
+            haStyle,
+        ]
+    }    
 }
 
 declare global {

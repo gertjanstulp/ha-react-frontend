@@ -2,7 +2,6 @@ import { dump } from "js-yaml";
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
-import { formatDateTimeWithSeconds } from "../../../homeassistant-frontend/src/common/datetime/format_date_time";
 import { traceTabStyles } from "../../../homeassistant-frontend/src/components/trace/trace-tab-styles";
 import { HomeAssistant } from "../../../homeassistant-frontend/src/types";
 import { getDataFromPath, WorkflowTraceExtended } from "../../data/trace";
@@ -12,6 +11,7 @@ import "../../../homeassistant-frontend/src/components/ha-icon-button";
 
 import { NodeInfo } from "./react-script-graph";
 import { ActionTraceStep } from "../../../homeassistant-frontend/src/data/trace";
+import { formatDateTimeWithSeconds } from "../../tools/datetime";
 
 @customElement("react-trace-path-details")
 export class ReactTracePathDetails extends LitElement {

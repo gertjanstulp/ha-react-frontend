@@ -43,13 +43,6 @@ class ReactReactionRouter extends HassRouterPage {
         tag: "react-reaction-panel",
         cache: true,
       },
-    //   edit: {
-    //     tag: "ha-automation-editor",
-    //   },
-    //   trace: {
-    //     tag: "ha-automation-trace",
-    //     load: () => import("./ha-automation-trace"),
-    //   },
     },
   };
 
@@ -61,11 +54,6 @@ class ReactReactionRouter extends HassRouterPage {
           !entity.attributes.restored
       ) as ReactionEntity[]
   );
-
-  protected firstUpdated(changedProps) {
-    super.firstUpdated(changedProps);
-    // this.hass.loadBackendTranslation("device_reaction");
-  }
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
     pageEl.hass = this.hass;

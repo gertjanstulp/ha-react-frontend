@@ -52,13 +52,26 @@ const DevelopPlugins = [
             [babelClassProperties.default, { loose: true }],
         ].filter(Boolean),
         extensions,
-        exclude: [require.resolve("@mdi/js/mdi.js")],
+        exclude: [
+            require.resolve("@mdi/js/mdi.js"),
+            require.resolve("@formatjs/intl-datetimeformat/add-all-tz.js"),
+        ],
     }),
     ignore({
         files: [
             require.resolve("@polymer/font-roboto/roboto.js"),
+            require.resolve("proxy-polyfill/src/index.js"),
+            require.resolve("@polymer/paper-styles/color.js"),
+            require.resolve("@polymer/paper-styles/default-theme.js"),
+            require.resolve("@vaadin/vaadin-material-styles/typography.js"),
+            require.resolve("@vaadin/vaadin-material-styles/font-icons.js"),
+    
+            path.resolve("./homeassistant-frontend/src/resources/compatibility.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon-picker.ts"),
+            path.resolve("./homeassistant-frontend/src/dialogs/config-flow"),
+            path.resolve("./homeassistant-frontend/src/panels/config/entities/entity-registry-settings.ts"),
+            path.resolve("./homeassistant-frontend/src/panels/config/entities/dialog-entity-editor.ts"),
         ],
     }),
     css(),
