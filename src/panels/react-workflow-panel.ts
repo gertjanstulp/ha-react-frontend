@@ -23,7 +23,7 @@ import { fireEvent } from "../../homeassistant-frontend/src/common/dom/fire_even
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { reactSections } from "./react-main-panel";
 import { navigate } from "../../homeassistant-frontend/src/common/navigate";
-import {React} from "../data/react"
+import {React, triggerWorkflow} from "../data/react"
 import { formatDateTime } from "../tools/datetime";
 
 @customElement("react-workflow-panel")
@@ -252,7 +252,7 @@ class ReactWorkflowPanel extends LitElement {
     };
   
     private _runActions = (workflow: WorkflowEntity) => {
-        // triggerWorkflowActions(this.hass, workflow.entity_id);
+        triggerWorkflow(this.hass, workflow.entity_id);
     };
   
   

@@ -12,6 +12,9 @@ import { showEntityEditorDialog } from "../../homeassistant-frontend/src/panels/
 import { haStyleDialog } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
 
+import "@material/mwc-tab";
+import "@material/mwc-tab-bar";
+
 import "./react-workflow-more-info"
 import "./react-state-card-content"
 
@@ -105,6 +108,22 @@ export class ReactMoreInfoDialog extends LitElement {
                                 `
                             : ""}
                     </ha-header-bar>
+                    <mwc-tab-bar
+                        .activeIndex=${this._currTabIndex}
+                        @MDCTabBar:activated=${this._handleTabChanged}
+                    >
+                        <mwc-tab
+                            .label=${this.hass.localize(
+                            "ui.dialogs.more_info_control.details"
+                            )}
+                            dialogInitialFocus
+                        ></mwc-tab>
+                        <mwc-tab
+                            .label=${this.hass.localize(
+                            "ui.dialogs.more_info_control.history"
+                            )}
+                        ></mwc-tab>
+                    </mwc-tab-bar>
                 </div>
 
                 <div class="content" tabindex="-1" dialogInitialFocus>
@@ -116,19 +135,6 @@ export class ReactMoreInfoDialog extends LitElement {
                                 .stateObj=${stateObj}
                                 .hass=${this.hass}
                             ></react-state-card-content>
-                            ${!this._computeShowHistoryComponent()
-                                ? ""
-                                : html`<ha-more-info-history
-                                    .hass=${this.hass}
-                                    .entityId=${this._entityId}
-                                ></ha-more-info-history>`}
-                            ${!this._computeShowLogBookComponent(entityId)
-                                ? ""
-                                : html`
-                                    <ha-more-info-logbook
-                                        .hass=${this.hass}
-                                        .entityId=${this._entityId}
-                                    ></ha-more-info-logbook>`}
                             <react-workflow-more-info
                                 .stateObj=${stateObj}
                                 .hass=${this.hass}
@@ -157,14 +163,20 @@ export class ReactMoreInfoDialog extends LitElement {
                                 : ""}
                             `
                         : html`
-                            <ha-more-info-history
-                                .hass=${this.hass}
-                                .entityId=${this._entityId}
-                            ></ha-more-info-history>
-                            <ha-more-info-logbook
-                                .hass=${this.hass}
-                                .entityId=${this._entityId}
-                            ></ha-more-info-logbook>
+                            ${this._computeShowHistoryComponent()
+                            ? html`
+                                <ha-more-info-history
+                                    .hass=${this.hass}
+                                    .entityId=${this._entityId}
+                                ></ha-more-info-history>`
+                            : ""}
+                            ${this._computeShowLogBookComponent(entityId) 
+                            ? html`
+                                <ha-more-info-logbook
+                                    .hass=${this.hass}
+                                    .entityId=${this._entityId}
+                                ></ha-more-info-logbook>`
+                            : ""}
                             `
                     )}
                 </div>
@@ -213,11 +225,21 @@ export class ReactMoreInfoDialog extends LitElement {
     }
 
     private _gotoSettings() {
-        replaceDialog();
+        replaceDialog(this);
         showEntityEditorDialog(this, {
             entity_id: this._entityId!,
         });
         this.closeDialog();
+    }
+
+    
+    private _handleTabChanged(ev: CustomEvent): void {
+        const newTab = ev.detail.index;
+        if (newTab === this._currTabIndex) {
+            return;
+        }
+
+        this._currTabIndex = ev.detail.index;
     }
 
     static get styles() {

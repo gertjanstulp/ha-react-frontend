@@ -1,8 +1,11 @@
 import { HassEntity } from "home-assistant-js-websocket";
-import { html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
 import "../../homeassistant-frontend/src/components/ha-attributes"
+import "../../homeassistant-frontend/src/components/ha-relative-time";
+import { UNAVAILABLE_STATES } from "../../homeassistant-frontend/src/data/entity";
+import { triggerWorkflow } from "../data/react";
 
 @customElement("react-workflow-more-info")
 class ReactWorkflowMoreInfo extends LitElement {
@@ -15,10 +18,53 @@ class ReactWorkflowMoreInfo extends LitElement {
             return html``;
         }
 
-        return html`<ha-attributes
-            .hass=${this.hass}
-            .stateObj=${this.stateObj}
-        ></ha-attributes>`;
+        return html`
+        <hr />
+        <div class="flex">
+            <div>${this.hass.localize("ui.card.automation.last_triggered")}:</div>
+            <ha-relative-time
+                .hass=${this.hass}
+                .datetime=${this.stateObj.attributes.last_triggered}
+                capitalize
+            ></ha-relative-time>
+        </div>
+        <div class="actions">
+            <mwc-button
+                @click=${this._runActions}
+                .disabled=${UNAVAILABLE_STATES.includes(this.stateObj!.state)}
+            >
+                ${this.hass.localize("ui.card.automation.trigger")}
+            </mwc-button>
+        </div>
+        `;
+    }
+
+    private _runActions() {
+        triggerWorkflow(this.hass, this.stateObj!.entity_id);
+    }
+
+    static get styles(): CSSResultGroup {
+        return css`
+            .flex {
+                display: flex;
+                justify-content: space-between;
+            }
+            .attributes {
+                margin: 8px 0;
+                
+            }
+            .actions {
+                margin: 8px 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            hr {
+                border-color: var(--divider-color);
+                border-bottom: none;
+                margin: 16px 0;
+            }
+        `;
     }
 }
 
