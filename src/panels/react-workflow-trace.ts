@@ -9,7 +9,6 @@ import { customElement, property, query, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { repeat } from "lit/directives/repeat";
 
-import { formatDateTimeWithSeconds } from "../../homeassistant-frontend/src/common/datetime/format_date_time";
 import { traceTabStyles } from "../../homeassistant-frontend/src/components/trace/trace-tab-styles";
 import { showAlertDialog } from "../../homeassistant-frontend/src/dialogs/generic/show-dialog-box";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
@@ -23,6 +22,7 @@ import { WorkflowTrace, WorkflowTraceExtended } from "../data/trace";
 import { loadTrace, loadTraces } from "../data/websocket";
 import { reactSections } from "./react-main-panel";
 import { NodeInfo, ReactScriptGraph } from "./trace/react-script-graph";
+import { formatDateTimeWithSeconds } from "../tools/datetime";
 
 import "./trace/react-script-graph"
 import "./trace/react-trace-path-details";
@@ -170,7 +170,7 @@ export class ReactWorkflowTrace extends LitElement {
                         <div class="tabs top">
                             ${[
                                 ["details", "Step Details"],
-                                ["config", "Automation Config"],
+                                ["config", "Workflow Config"],
                             ].map(
                                 ([view, label]) => html`
                                 <button
@@ -241,7 +241,7 @@ export class ReactWorkflowTrace extends LitElement {
             this._loadTrace();
         }
     
-          if (
+        if (
             changedProps.has("workflows") &&
             this.workflowId &&
             !this._entityId

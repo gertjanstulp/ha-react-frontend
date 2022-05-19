@@ -19,8 +19,6 @@ import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-di
 
 @customElement("react-frontend")
 class ReactFrontend extends ReactElement {
-    @property({ attribute: false }) public hass!: HomeAssistant;
-
     @property({ attribute: false }) public narrow!: boolean;
 
     @property({ attribute: false }) public route!: Route;
@@ -74,10 +72,6 @@ class ReactFrontend extends ReactElement {
         makeDialogManager(this, this.shadowRoot!);
     }
     
-    public willUpdate(changedProps: PropertyValues) {
-        super.willUpdate(changedProps);
-    }
-
     protected updated(changedProps: PropertyValues) {
         super.updated(changedProps);
         const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
@@ -120,14 +114,13 @@ class ReactFrontend extends ReactElement {
 
         return html`
             <react-main-panel
-            .hass=${this.hass}
-            .react=${this.react}
-            .route=${this.route}
-            .narrow=${this.narrow}
+                .hass=${this.hass}
+                .react=${this.react}
+                .route=${this.route}
+                .narrow=${this.narrow}
             ></react-main-panel>
         `;
     }
-
     
     protected updatePageEl(el) {
         const hass = this.hass;
@@ -163,26 +156,32 @@ class ReactFrontend extends ReactElement {
 
     private _applyTheme() {
         let options: Partial<HomeAssistant["selectedTheme"]> | undefined;
-    
+        
         const themeName =
-          this.hass.selectedTheme?.theme ||
-          (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
-            ? this.hass.themes.default_dark_theme!
-            : this.hass.themes.default_theme);
-    
+            this.hass.selectedTheme?.theme ||
+            (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
+                ? this.hass.themes.default_dark_theme!
+                : this.hass.themes.default_theme);
         options = this.hass.selectedTheme;
         if (themeName === "default" && options?.dark === undefined) {
-          options = {
-            ...this.hass.selectedTheme,
-          };
+            options = {
+                ...this.hass.selectedTheme,
+            };
         }
     
         if (this.parentElement) {
-          applyThemesOnElement(this.parentElement, this.hass.themes, themeName, {
-            ...options,
-            dark: this.hass.themes.darkMode,
-          });
-          this.parentElement.style.backgroundColor = "var(--primary-background-color)";
+            applyThemesOnElement(this.parentElement, this.hass.themes, themeName, {
+                ...options,
+                dark: this.hass.themes.darkMode,
+            });
+            this.parentElement.style.backgroundColor = "var(--primary-background-color)";
         }
     }
 }
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "react-frontend": ReactFrontend;
+    }
+}
+  

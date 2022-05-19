@@ -11,10 +11,10 @@ import "./react-workflow-panel";
 import {React} from "../data/react"
 
 const equal = (a: WorkflowEntity[], b: WorkflowEntity[]): boolean => {
-if (a.length !== b.length) {
-return false;
-}
-return a.every((workflow, index) => workflow === b[index]);
+    if (a.length !== b.length) {
+        return false;
+    }
+    return a.every((workflow, index) => workflow === b[index]);
 };
 
 @customElement("react-workflow-router")
@@ -41,17 +41,14 @@ class ReactWorkflowRouter extends HassRouterPage {
     protected routerOptions: RouterOptions = {
         defaultPage: "dashboard",
         routes: {
-            dashboard: {
-                tag: "react-workflow-panel",
-                load: () => import("./react-workflow-panel"),
-            },
-            //   edit: {
-            //     tag: "ha-automation-editor",
-            //   },
-              trace: {
-                tag: "react-workflow-trace",
-                load: () => import("./react-workflow-trace"),
-              },
+                dashboard: {
+                    tag: "react-workflow-panel",
+                    load: () => import("./react-workflow-panel"),
+                },
+                trace: {
+                    tag: "react-workflow-trace",
+                    load: () => import("./react-workflow-trace"),
+                },
             },
     };
 
@@ -63,11 +60,6 @@ class ReactWorkflowRouter extends HassRouterPage {
                 !entity.attributes.restored
             ) as WorkflowEntity[]
     );
-
-    protected firstUpdated(changedProps) {
-        super.firstUpdated(changedProps);
-        this.hass.loadBackendTranslation("device_automation");
-    }
 
     protected updatePageEl(pageEl, changedProps: PropertyValues) {
         pageEl.hass = this.hass;

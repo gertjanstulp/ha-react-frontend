@@ -1,8 +1,6 @@
 import {
     mdiHistory,
     mdiInformationOutline,
-    mdiPencil,
-    mdiPencilOff,
     mdiPlayCircleOutline,
 } from "@mdi/js";
 import "../../homeassistant-frontend/src/components/entity/ha-entity-toggle";
@@ -20,14 +18,13 @@ import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { WorkflowEntity } from "../data/entities";
 import { computeStateName } from "../../homeassistant-frontend/src/common/entity/compute_state_name";
 import { DataTableColumnContainer } from "../../homeassistant-frontend/src/components/data-table/ha-data-table";
-import { formatDateTime } from "../../homeassistant-frontend/src/common/datetime/format_date_time";
 import { UNAVAILABLE_STATES } from "../../homeassistant-frontend/src/data/entity";
-// import { reactSections } from "./react-main-panel";
 import { fireEvent } from "../../homeassistant-frontend/src/common/dom/fire_event";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { reactSections } from "./react-main-panel";
 import { navigate } from "../../homeassistant-frontend/src/common/navigate";
-import {React} from "../data/react"
+import {React, triggerWorkflow} from "../data/react"
+import { formatDateTime } from "../tools/datetime";
 
 @customElement("react-workflow-panel")
 class ReactWorkflowPanel extends LitElement {
@@ -255,7 +252,7 @@ class ReactWorkflowPanel extends LitElement {
     };
   
     private _runActions = (workflow: WorkflowEntity) => {
-        // triggerWorkflowActions(this.hass, workflow.entity_id);
+        triggerWorkflow(this.hass, workflow.entity_id);
     };
   
   

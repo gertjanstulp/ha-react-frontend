@@ -1,5 +1,4 @@
 const gulp = require("gulp");
-const css = require("rollup-plugin-import-css");
 const rollup = require("rollup");
 const http = require("http");
 const path = require("path");
@@ -52,16 +51,23 @@ const DevelopPlugins = [
             [babelClassProperties.default, { loose: true }],
         ].filter(Boolean),
         extensions,
-        exclude: [require.resolve("@mdi/js/mdi.js")],
+        exclude: [
+            require.resolve("@mdi/js/mdi.js"),
+        ],
     }),
     ignore({
         files: [
             require.resolve("@polymer/font-roboto/roboto.js"),
+            require.resolve("@formatjs/intl-datetimeformat/add-all-tz"),
+            require.resolve("proxy-polyfill/src/index.js"),
+    
+            path.resolve("./homeassistant-frontend/src/resources/compatibility.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon.ts"),
             path.resolve("./homeassistant-frontend/src/components/ha-icon-picker.ts"),
+            path.resolve("./homeassistant-frontend/src/dialogs/config-flow"),
+            path.resolve("./homeassistant-frontend/src/panels/config/entities/entity-registry-settings.ts"),
         ],
     }),
-    css(),
     entrypointHashmanifest({ manifestName: "./react_frontend/manifest.json" }),
 ];
 
