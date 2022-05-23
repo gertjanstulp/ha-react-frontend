@@ -23,8 +23,6 @@ class ReactWorkflowRouter extends HassRouterPage {
 
     @property({ attribute: false }) public react!: React;
 
-    @property() public route!: Route;
-    
     @property() public isWide!: boolean;
     
     @property() public narrow!: boolean;
@@ -41,15 +39,15 @@ class ReactWorkflowRouter extends HassRouterPage {
     protected routerOptions: RouterOptions = {
         defaultPage: "dashboard",
         routes: {
-                dashboard: {
-                    tag: "react-workflow-panel",
-                    load: () => import("./react-workflow-panel"),
-                },
-                trace: {
-                    tag: "react-workflow-trace",
-                    load: () => import("./react-workflow-trace"),
-                },
+            dashboard: {
+                tag: "react-workflow-panel",
+                cache: true,
             },
+            trace: {
+                tag: "react-workflow-trace",
+                load: () => import("./react-workflow-trace"),
+            },
+        },
     };
 
     private _getWorkflows = memoizeOne(
