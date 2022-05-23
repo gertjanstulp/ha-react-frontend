@@ -224,7 +224,7 @@ export class ReactWorkflowTrace extends LitElement {
   
     protected updated(changedProps) {
         super.updated(changedProps);
-    
+
         // Only reset if workflowId has changed and we had one before.
         if (changedProps.get("workflowId")) {
             this._traces = undefined;
@@ -247,7 +247,7 @@ export class ReactWorkflowTrace extends LitElement {
             !this._entityId
         ) {
             const workflow = this.workflows.find(
-                (entity: WorkflowEntity) => entity.attributes.id === this.workflowId
+                (entity: WorkflowEntity) => entity.attributes.workflow_id === this.workflowId
             );
             this._entityId = workflow?.entity_id;
         }
