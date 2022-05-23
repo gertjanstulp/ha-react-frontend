@@ -36,14 +36,7 @@ venv/*
 !.vscode/launch.json
 !.vscode/tasks.json
 
-# Cast dev settings
-src/cast/dev_const.ts
-
 # Secrets
 .lokalise_token
 
-# asdf
 .tool-versions
-
-# Home Assistant config
-/config
