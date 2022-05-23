@@ -2,7 +2,7 @@ import { HassEntityAttributeBase, HassEntityBase } from "home-assistant-js-webso
 
 export interface WorkflowEntity extends HassEntityBase {
     attributes: HassEntityAttributeBase & {
-        id?: string;
+        workflow_id?: string;
         last_triggered: string;
     };
 }
