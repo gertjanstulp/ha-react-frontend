@@ -1,13 +1,42 @@
-node_modules
-package-lock.json
-build
-src/localize/generated.ts
-!script/build
-react_frontend/*.js
-react_frontend/*.json
-react_frontend/*.js.gz
-react_frontend/*.css
-!react_frontend/*.py
+.DS_Store
+.reify-cache
+generated.ts
 
+# build
+build
+react_frontend/*
+dist
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+node_modules/*
 yarn-error.log
-.vscode/*.log
+npm-debug.log
+
+# Python stuff
+*.py[cod]
+*.egg
+*.egg-info
+
+# venv stuff
+pyvenv.cfg
+pip-selfcheck.json
+venv/*
+.venv
+
+# vscode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Secrets
+.lokalise_token
+
+.tool-versions
