@@ -4,6 +4,7 @@ export interface WorkflowEntity extends HassEntityBase {
     attributes: HassEntityAttributeBase & {
         workflow_id?: string;
         last_triggered: string;
+        unit_of_measurement: string
     };
 }
 
