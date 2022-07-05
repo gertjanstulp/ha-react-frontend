@@ -9,6 +9,7 @@ export interface WorkflowConfig {
 }
 
 export interface ActorConfig {
+    index: number,
     trigger: CtorConfig,
     condition: ConditionConfig;
 }
@@ -82,7 +83,7 @@ export const getDataFromPath = (
         }
     
         if (Array.isArray(result)) {
-            result = result[asNumber];
+            result = result.find(i => i.index === asNumber);
             continue;
         }
     

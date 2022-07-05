@@ -249,8 +249,8 @@ export class ReactScriptGraph extends LitElement {
     protected render() {
         const paths = Object.keys(this.trackedNodes);
         const actor_nodes =
-            ensureArray(this.trace.config.actor).map((actor, i) =>
-                this.render_actor(actor, i)
+            ensureArray(this.trace.config.actor).map((actor) =>
+                this.render_actor(actor, actor.index)
             )
         try {
             return html`
