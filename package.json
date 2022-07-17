@@ -253,6 +253,7 @@
     "chart.js": "3.3.2",
     "app-datepicker": "5.0.1",
     "node-emoji": "1.10.0",
+    "postcss": "^8.4.14",
     "rollup-plugin-postcss": "^4.0.2",
     "@lit-labs/virtualizer": "0.7.0",
     "@material/mwc-linear-progress": "canary",
