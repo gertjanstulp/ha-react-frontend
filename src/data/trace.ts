@@ -20,12 +20,17 @@ export interface CtorConfig {
     type: string;
     action: string;
     enabled: boolean;
+    data: DataConfig;
 }
 
 export interface ReactorConfig {
     event: CtorConfig;
     condition: ConditionConfig;
     timing: string;
+}
+
+export interface DataConfig {
+    [key: string] : string
 }
 
 export interface ParallelConfig {
