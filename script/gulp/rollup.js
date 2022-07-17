@@ -15,6 +15,7 @@ const babelDecorators = require("@babel/plugin-proposal-decorators");
 const babelClassProperties = require("@babel/plugin-proposal-class-properties");
 const entrypointHashmanifest = require("rollup-plugin-entrypoint-hashmanifest");
 const zopfli = require("gulp-zopfli-green");
+const postcss = require('rollup-plugin-postcss')
 
 const nodeResolve = require("@rollup/plugin-node-resolve");
 const { terser } = require("rollup-plugin-terser");
@@ -67,6 +68,9 @@ const DevelopPlugins = [
             path.resolve("./homeassistant-frontend/src/dialogs/config-flow"),
             path.resolve("./homeassistant-frontend/src/panels/config/entities/entity-registry-settings.ts"),
         ],
+    }),
+    postcss({
+        plugins: []
     }),
     entrypointHashmanifest({ manifestName: "./react_frontend/manifest.json" }),
 ];

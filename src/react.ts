@@ -48,14 +48,14 @@ export class ReactElement extends LitElement {
         // For some reason the default 'define' method used for registering
         // modules breaks when the same module is registered twice. Replace
         // the default implementation with one that checks this.
-        // this._customElementsDefine = window.customElements.define;
-        // const that = this
-        // window.customElements.define = function(name, clazz, config) {
-        //     if (!customElements.get(name)) {
-        //         if (that._customElementsDefine)
-        //         that._customElementsDefine.call(window.customElements, name, clazz, config);
-        //     }
-        // }
+        this._customElementsDefine = window.customElements.define;
+        const that = this
+        window.customElements.define = function(name, clazz, config) {
+            if (!customElements.get(name)) {
+                if (that._customElementsDefine)
+                that._customElementsDefine.call(window.customElements, name, clazz, config);
+            }
+        }
         
         if (this.react === undefined) {
             this.react = {
