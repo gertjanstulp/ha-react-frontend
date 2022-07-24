@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run the frontend development server
+# Builds the frontend for production
 
 # Stop on errors
 set -e

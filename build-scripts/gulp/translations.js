@@ -34,16 +34,30 @@ gulp.task("generate-translations", async function (task) {
             "",
             fs.readJSONSync(`./src/localize/languages/${file}`, "utf-8")
         );
-        log(`Generating transtions for '${lang}'`);
+        log(`Generating translations for '${lang}'`);
     });
 
     await fs.mkdirs("./homeassistant-frontend/build/translations");
+    await fs.mkdirs("./homeassistant-frontend/build/mdi");
 
     await fs.writeFile(
         "./homeassistant-frontend/build/translations/translationMetadata.json",
         "{}",
         "utf-8"
     );
+    
+    await fs.writeFile(
+        "./homeassistant-frontend/build/mdi/iconMetadata.json",
+        "{}",
+        "utf-8"
+    );
+
+    await fs.writeFile(
+        "./homeassistant-frontend/build/mdi/iconList.json",
+        "{}",
+        "utf-8"
+    );
+    
 
     await fs.writeFile(
         "./src/localize/generated.ts",
