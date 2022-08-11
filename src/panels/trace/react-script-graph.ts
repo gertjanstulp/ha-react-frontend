@@ -1,7 +1,7 @@
 import {
     mdiAbTesting,
-    mdiChevronDoubleDown,
-    mdiChevronDoubleRight,
+    mdiAsterisk,
+    mdiExclamation,
     mdiChevronDown,
     mdiChevronUp,
     mdiClose,
@@ -80,7 +80,7 @@ export class ReactScriptGraph extends LitElement {
                 ?track=${track}
                 @focus=${this.selectNode(config, triggerPath)}
                 ?active=${this.selected === triggerPath}
-                .iconPath=${mdiChevronDoubleDown}
+                .iconPath=${mdiAsterisk}
                 .notEnabled=${config.trigger.enabled === false}
                 tabindex=${track ? "0" : "-1"}
             ></hat-graph-node>`
@@ -120,7 +120,7 @@ export class ReactScriptGraph extends LitElement {
     ) {
         return html`
             <hat-graph-node
-                .iconPath=${config.timing === "immediate" ? mdiChevronDoubleRight : mdiTimerOutline}
+                .iconPath=${config.event.timing === "immediate" ? mdiExclamation : mdiTimerOutline}
                 @focus=${this.selectNode(config, eventPath)}
                 ?track=${track}
                 ?active=${this.selected === eventPath}
@@ -147,7 +147,7 @@ export class ReactScriptGraph extends LitElement {
                 @focus=${this.selectNode(config, path)}
                 ?track=${condition_info.track}
                 ?active=${this.selected === path}
-                .notEnabled=${disabled || config.enabled === false}
+                .notEnabled=${disabled}
                 tabindex=${condition_info.trace === undefined ? "-1" : "0"}
                 short
             >
@@ -156,7 +156,7 @@ export class ReactScriptGraph extends LitElement {
                     slot="head"
                     ?track=${condition_info.track}
                     ?active=${this.selected === path}
-                    .notEnabled=${disabled || config.enabled === false}
+                    .notEnabled=${disabled}
                     .iconPath=${mdiAbTesting}
                     nofocus
                 ></hat-graph-node>
@@ -171,7 +171,7 @@ export class ReactScriptGraph extends LitElement {
                     nofocus
                     ?track=${condition_info.trackFailed}
                     ?active=${this.selected === path}
-                    .notEnabled=${disabled || config.enabled === false}
+                    .notEnabled=${disabled}
                 ></hat-graph-node>
             </hat-graph-branch>
         `;
