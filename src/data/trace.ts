@@ -23,10 +23,13 @@ export interface CtorConfig {
     data: DataConfig;
 }
 
-export interface ReactorConfig {
-    event: CtorConfig;
-    condition: ConditionConfig;
+export interface ReactorEventconfig extends CtorConfig {
     timing: string;
+}
+
+export interface ReactorConfig {
+    event: ReactorEventconfig;
+    condition: ConditionConfig;
 }
 
 export interface DataConfig {
@@ -38,7 +41,6 @@ export interface ParallelConfig {
 }
 
 export interface ConditionConfig {
-    enabled: boolean;
     template: string;
 }
 

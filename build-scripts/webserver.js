@@ -12,6 +12,8 @@ const createServer = function() {
     server.listen(5000, true, () => {
         log.info("File will be served to http://127.0.0.1:5000/entrypoint.js");
     });
+
+    return server
 }
 
 module.exports = {
