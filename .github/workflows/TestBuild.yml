@@ -27,6 +27,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
 
+      - name: Bootstrap Home Assistant
+        run: homeassistant-frontend/script/bootstrap
       - name: Install dependencies
         run: script/bootstrap
       - name: Build
