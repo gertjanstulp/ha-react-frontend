@@ -8,11 +8,26 @@ import "../../homeassistant-frontend/src/components/entity/state-info";
 class ReactStateCardToggle extends PolymerElement {
     static get template() {
         return html`
-            <style include="iron-flex iron-flex-alignment"></style>
             <style>
                 ha-entity-toggle {
                     margin: -4px -16px -4px 0;
                     padding: 4px 16px;
+                }
+                .layout.horizontal,
+                .layout.vertical {
+                    display: -ms-flexbox;
+                    display: -webkit-flex;
+                    display: flex;
+                }
+                .layout.horizontal {
+                    -ms-flex-direction: row;
+                    -webkit-flex-direction: row;
+                    flex-direction: row;
+                }
+                .layout.justified {
+                    -ms-flex-pack: justify;
+                    -webkit-justify-content: space-between;
+                    justify-content: space-between;
                 }
             </style>
 
