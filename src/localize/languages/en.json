@@ -2,9 +2,21 @@
     "sections": {
         "workflows": {
             "title": "Workflows",
+            "description": "Manage workflow state and diagnose execution",
             "columns": {
                 "name": "Name"
             }
+        },
+        "reactions": {
+            "title": "Reactions",
+            "description": "Manage, disable, trigger and delete reactions",
+            "columns": {
+                "name": "Name"
+            }
+        },
+        "about" : {
+            "title": "About",
+            "description": "About"
         }
     },
     "ui": {
@@ -15,23 +27,64 @@
                         "toggle": "Toggle",
                         "name": "Name",
                         "actions": "Actions",
+                        "last_triggered": "Last triggered",
                         "trigger": "Trigger"
                     },
-                    "show_info_workflow": "Info",
-                    "trace": "Trace",
-                    "no_workflows": "We couldn’t find any workflows"
+                    "actions" : {
+                        "info": "Info",
+                        "trace": "Trace",
+                        "trigger": "Trigger"
+                    },
+                    "no_workflows": "- no workflows -"
                 }
-            }
-        },
-        "card":{
-            "workflow": {
-                "last_triggered": "Last triggered",
-                "trigger": "Run Actions"
+            },
+            "reaction": {
+                "picker": {
+                    "headers": {
+                        "toggle": "Toggle",
+                        "name": "Name",
+                        "actions": "Actions",
+                        "trigger": "Trigger",
+                        "react_now": "React now",
+                        "when": "When"
+                    },
+                    "actions" : {
+                        "info": "Info",
+                        "delete": "Delete",
+                        "trigger": "Trigger",
+                        "react_now": "React now"
+                    },
+                    "no_reactions": "- no reactions -"
+                }
             }
         },
         "components": {
             "relative_time": {
                 "never": "Never"
+            }
+        },
+        "dialogs": {
+            "confirm_delete_reaction": {
+                "title": "Delete reaction",
+                "text": "Are you sure you want to delete this reaction? It will not be executed."
+            },
+            "info": {
+                "workflow": {
+                    "trigger" : "Trigger",
+                    "last_triggered" :"Last triggered"
+                },
+                "reaction": {
+                    "id": "Id",
+                    "workflow_id": "Workflow id",
+                    "entity": "Entity",
+                    "type": "Type",
+                    "action": "Action",
+                    "reset_workflow": "Reset workflow",
+                    "overwrite": "Overwrite",
+                    "forward_action": "Forward action",
+                    "trigger" : "Trigger",
+                    "react_now": "React now"
+                }
             }
         }
     }

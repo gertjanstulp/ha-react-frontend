@@ -2,14 +2,18 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
-import "../../homeassistant-frontend/src/components/ha-attributes"
-import "../../homeassistant-frontend/src/components/ha-relative-time";
 import { UNAVAILABLE_STATES } from "../../homeassistant-frontend/src/data/entity";
 import { triggerWorkflow } from "../data/react";
+import { React } from "../data/react"
+
+import "../../homeassistant-frontend/src/components/ha-attributes"
+import "../../homeassistant-frontend/src/components/ha-relative-time";
 
 @customElement("react-workflow-more-info")
 class ReactWorkflowMoreInfo extends LitElement {
     @property({ attribute: false }) public hass!: HomeAssistant;
+    
+    @property({ attribute: false }) public react!: React;
 
     @property() public stateObj?: HassEntity;
 
@@ -19,27 +23,27 @@ class ReactWorkflowMoreInfo extends LitElement {
         }
 
         return html`
-        <hr />
-        <div class="flex">
-            <div>${this.hass.localize("ui.card.automation.last_triggered")}:</div>
-            <ha-relative-time
-                .hass=${this.hass}
-                .datetime=${this.stateObj.attributes.last_triggered}
-                capitalize
-            ></ha-relative-time>
-        </div>
-        <div class="actions">
-            <mwc-button
-                @click=${this._runActions}
-                .disabled=${UNAVAILABLE_STATES.includes(this.stateObj!.state)}
-            >
-                ${this.hass.localize("ui.card.automation.trigger")}
-            </mwc-button>
-        </div>
+            <hr />
+            <div class="flex">
+                <div>${this.react.localize("ui.dialogs.info.workflow.last_triggered")}:</div>
+                <ha-relative-time
+                    .hass=${this.hass}
+                    .datetime=${this.stateObj.attributes.last_triggered}
+                    capitalize
+                ></ha-relative-time>
+            </div>
+            <div class="actions">
+                <mwc-button
+                    @click=${this._trigger}
+                    .disabled=${UNAVAILABLE_STATES.includes(this.stateObj!.state)}
+                >
+                    ${this.react.localize("ui.dialogs.info.workflow.trigger")}
+                </mwc-button>
+            </div>
         `;
     }
 
-    private _runActions() {
+    private _trigger() {
         triggerWorkflow(this.hass, this.stateObj!.entity_id);
     }
 

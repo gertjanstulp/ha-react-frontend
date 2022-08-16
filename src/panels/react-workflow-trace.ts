@@ -20,17 +20,19 @@ import "../../homeassistant-frontend/src/components/trace/ha-trace-config";
 import { WorkflowEntity } from "../data/entities";
 import { WorkflowTrace, WorkflowTraceExtended } from "../data/trace";
 import { loadTrace, loadTraces } from "../data/websocket";
-import { reactSections } from "./react-main-panel";
+// import { reactSections } from "../react-router";
 import { NodeInfo, ReactScriptGraph } from "./trace/react-script-graph";
 import { formatDateTimeWithSeconds } from "../tools/datetime";
-
-import "./trace/react-script-graph"
+import { React } from "../data/react";
+import "./trace/react-script-graph";
 import "./trace/react-trace-path-details";
   
 @customElement("react-workflow-trace")
 export class ReactWorkflowTrace extends LitElement {
     @property({ attribute: false }) public hass!: HomeAssistant;
   
+    @property({ attribute: false }) public react!: React;
+
     @property() public workflowId!: string;
   
     @property({ attribute: false }) public workflows!: WorkflowEntity[];
@@ -100,7 +102,7 @@ export class ReactWorkflowTrace extends LitElement {
                 .hass=${this.hass}
                 .narrow=${this.narrow}
                 .route=${this.route}
-                .tabs=${reactSections.react}
+                .tabs=${this.react.sections}
             >
             ${this.narrow
                 ? html`<span slot="header">${title}</span>

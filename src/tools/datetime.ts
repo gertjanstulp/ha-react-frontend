@@ -52,6 +52,7 @@ const formatDateTimeMem = memoizeOne(
                 hour: useAmPm(locale) ? "numeric" : "2-digit",
                 minute: "2-digit",
                 hour12: useAmPm(locale),
+                second: "2-digit"
             }
         )
 );

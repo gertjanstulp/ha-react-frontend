@@ -27,8 +27,6 @@ class ReactWorkflowRouter extends HassRouterPage {
     
     @property() public narrow!: boolean;
 
-    @property() public showAdvanced!: boolean;
-
     private _debouncedUpdateWorkflows = debounce((pageEl) => {
         const newWorkflows = this._getWorkflows(this.hass.states);
         if (!equal(newWorkflows, pageEl.workflows)) {
@@ -65,7 +63,6 @@ class ReactWorkflowRouter extends HassRouterPage {
         pageEl.route = this.routeTail;
         pageEl.narrow = this.narrow;
         pageEl.isWide = this.isWide;
-        pageEl.showAdvanced = this.showAdvanced;
 
         if (this.hass) {
             if (!pageEl.workflows || !changedProps) {

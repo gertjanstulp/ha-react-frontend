@@ -4,6 +4,7 @@ import { showDialog } from "../homeassistant-frontend/src/dialogs/make-dialog-ma
 import { HomeAssistant } from "../homeassistant-frontend/src/types";
 import { React } from "./data/react";
 import { localize } from "./localize/localize";
+import { sectionsEnabled } from "./panels/react-sections";
 import { ReactLogger } from "./tools/react-logger";
 
 export class ReactElement extends LitElement {
@@ -27,13 +28,14 @@ export class ReactElement extends LitElement {
         showDialog(
             this,
             this.shadowRoot!,
-            "react-more-info-dialog",
+            "react-details-dialog",
             {
                 entityId: ev.detail.entityId,
+                react: this.react
             },
             () => import("./dialogs/react-details-dialog")
-            );
-        }
+        );
+    }
         
     public disconnectedCallback(): void {
         super.disconnectedCallback() 
@@ -65,6 +67,7 @@ export class ReactElement extends LitElement {
                 resources: [],
                 workflows: [],
                 removed: [],
+                sections: [],
                 configuration: {} as any,
                 status: {} as any,
                 localize: (string: string, replace?: Record<string, any>) =>
@@ -103,6 +106,7 @@ export class ReactElement extends LitElement {
         }
         
         if (this.react.language && this.react.configuration) {
+            this.react.sections = sectionsEnabled(this.react.language, this.react.configuration);
         }
     }
 

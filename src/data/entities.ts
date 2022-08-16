@@ -4,15 +4,20 @@ export interface WorkflowEntity extends HassEntityBase {
     attributes: HassEntityAttributeBase & {
         workflow_id?: string;
         last_triggered: string;
-        unit_of_measurement: string
     };
 }
 
 
 export interface ReactionEntity extends HassEntityBase {
     attributes: HassEntityAttributeBase & {
-        id?: string;
-        last_triggered: string;
+        id: string;
+        workflow_id: string
+        entity: string
+        type: string
+        action: string
+        reset_workflow: string
+        overwrite: boolean
+        forward_action: boolean
     };
 }
 
