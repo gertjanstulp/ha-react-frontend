@@ -13,4 +13,5 @@ if [ ! -d "./node_modules" ]; then
 fi
 
 ./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js gen-icons-json
+./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js build-translations
 ./node_modules/.bin/gulp build
