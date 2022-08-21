@@ -8,6 +8,7 @@ export interface React {
     resources: any[];
     workflows: Workflow[];
     removed: any[];
+    sections: any;
     configuration: Configuration;
     status: Status;
     localize(string: string, replace?: Record<string, any>): string;
@@ -17,8 +18,35 @@ export interface React {
 export const triggerWorkflow = (
     hass: HomeAssistant,
     entityId: string
-  ) => {
-    hass.callService("react", "trigger", {
-      entity_id: entityId,
+) => {
+    hass.callService("react", "trigger_workflow", {
+        entity_id: entityId,
     });
-  };
+};
+
+export const triggerReaction = (
+    hass: HomeAssistant,
+    entityId: string
+) => {
+    hass.callService("react", "trigger_reaction", {
+        entity_id: entityId,
+    });
+};
+
+export const deleteReaction = (
+    hass: HomeAssistant,
+    entityId: string
+) => {
+    hass.callService("react", "delete_reaction", {
+        entity_id: entityId,
+    });
+};
+
+export const reactNow = (
+    hass: HomeAssistant,
+    entityId: string
+) => {
+    hass.callService("react", "react_now", {
+        entity_id: entityId,
+    });
+};

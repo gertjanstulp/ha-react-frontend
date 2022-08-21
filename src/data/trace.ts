@@ -10,7 +10,7 @@ export interface WorkflowConfig {
 
 export interface ActorConfig {
     index: number,
-    trigger: CtorConfig,
+    runWorkflow: CtorConfig,
     condition: ConditionConfig;
 }
 
@@ -64,7 +64,7 @@ interface BaseTraceExtended {
   
 export interface WorkflowTrace extends BaseTrace {
     domain: "react";
-    trigger: string;
+    runWorkflow: string;
 }
 
 export interface WorkflowTraceExtended extends WorkflowTrace, BaseTraceExtended {

@@ -11,12 +11,15 @@ import { replaceDialog } from "../../homeassistant-frontend/src/dialogs/make-dia
 import { showEntityEditorDialog } from "../../homeassistant-frontend/src/panels/config/entities/show-dialog-entity-editor";
 import { haStyleDialog } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
+import { React } from "../data/react"
 
 import "@material/mwc-tab";
 import "@material/mwc-tab-bar";
 
 import "./react-workflow-more-info"
-import "./react-state-card-content"
+import "./react-workflow-state-card"
+import "./react-reaction-more-info"
+import "./react-reaction-state-card"
 
 import "../../homeassistant-frontend/src/components/ha-dialog"
 import "../../homeassistant-frontend/src/components/ha-header-bar";
@@ -24,27 +27,41 @@ import "../../homeassistant-frontend/src/components/ha-icon-button";
 import "../../homeassistant-frontend/src/dialogs/more-info/ha-more-info-history";
 import "../../homeassistant-frontend/src/dialogs/more-info/ha-more-info-logbook";
 import "../../homeassistant-frontend/src/state-summary/state-card-toggle"
-
+import { computeDomain } from "../../homeassistant-frontend/src/common/entity/compute_domain";
 
 export interface MoreInfoDialogParams {
     entityId: string | null;
+    react: React;
 }
 
-@customElement("react-more-info-dialog")
-export class ReactMoreInfoDialog extends LitElement {
+@customElement("react-details-dialog")
+export class ReactDetailsDialog extends LitElement {
     @property({ attribute: false }) public hass!: HomeAssistant;
+
+    @property({ attribute: false }) public react!: React;
 
     @property({ type: Boolean, reflect: true }) public large = false;
 
     @state() private _entityId?: string | null;
 
+    @state() private _entityType?: string | null;
+
+    @state() private _domain?: string | null;
+
     @state() private _currTabIndex = 0;
 
     public showDialog(params: MoreInfoDialogParams) {
         this._entityId = params.entityId;
+        this.react = params.react
         if (!this._entityId) {
             this.closeDialog();
-        return;
+            return;
+        }
+        this._domain = computeDomain(this._entityId);
+        if (this._domain === "react") {
+            this._entityType = "workflow"
+        } else {
+            this._entityType = "reaction"
         }
         this.large = false;
     }
@@ -68,7 +85,7 @@ export class ReactMoreInfoDialog extends LitElement {
 
         const domain = "react";
         const name = computeStateName(stateObj);
-
+        
         return html`
             <ha-dialog
                 open
@@ -82,9 +99,7 @@ export class ReactMoreInfoDialog extends LitElement {
                         <ha-icon-button
                             slot="navigationIcon"
                             dialogAction="cancel"
-                            .label=${this.hass.localize(
-                                "ui.dialogs.more_info_control.dismiss"
-                            )}
+                            .label=${this.hass.localize("ui.dialogs.more_info_control.dismiss")}
                             .path=${mdiClose}
                         ></ha-icon-button>
                         <div
@@ -99,9 +114,7 @@ export class ReactMoreInfoDialog extends LitElement {
                             ? html`
                                 <ha-icon-button
                                     slot="actionItems"
-                                    .label=${this.hass.localize(
-                                    "ui.dialogs.more_info_control.settings"
-                                    )}
+                                    .label=${this.hass.localize("ui.dialogs.more_info_control.settings")}
                                     .path=${mdiCog}
                                     @click=${this._gotoSettings}
                                 ></ha-icon-button>
@@ -113,15 +126,11 @@ export class ReactMoreInfoDialog extends LitElement {
                         @MDCTabBar:activated=${this._handleTabChanged}
                     >
                         <mwc-tab
-                            .label=${this.hass.localize(
-                            "ui.dialogs.more_info_control.details"
-                            )}
+                            .label=${this.hass.localize("ui.dialogs.more_info_control.details")}
                             dialogInitialFocus
                         ></mwc-tab>
                         <mwc-tab
-                            .label=${this.hass.localize(
-                            "ui.dialogs.more_info_control.history"
-                            )}
+                            .label=${this.hass.localize("ui.dialogs.more_info_control.history")}
                         ></mwc-tab>
                     </mwc-tab-bar>
                 </div>
@@ -130,53 +139,62 @@ export class ReactMoreInfoDialog extends LitElement {
                     ${cache(
                         this._currTabIndex === 0
                         ? html`
-                            <react-state-card-content
-                                in-dialog
-                                .stateObj=${stateObj}
-                                .hass=${this.hass}
-                            ></react-state-card-content>
-                            <react-workflow-more-info
-                                .stateObj=${stateObj}
-                                .hass=${this.hass}
-                            ></react-workflow-more-info>
+                            ${this._entityType === "reaction"
+                                ? html`
+                                    <state-card-display
+                                        inDialog
+                                        .stateObj=${stateObj}
+                                        .hass=${this.hass}>
+                                    </state-card-display>
+                                    <react-reaction-more-info
+                                        .stateObj=${stateObj}
+                                        .hass=${this.hass}
+                                        .react=${this.react}>
+                                    </react-reaction-more-info>
+                                    `
+                                : html`
+                                    <react-workflow-state-card
+                                        inDialog
+                                        .stateObj=${stateObj}
+                                        .hass=${this.hass}>
+                                    </react-workflow-state-card>
+                                    <react-workflow-more-info
+                                        .stateObj=${stateObj}
+                                        .hass=${this.hass}
+                                        .react=${this.react}>
+                                    </react-workflow-more-info>
+                                    `
+                            }
                             ${stateObj.attributes.restored
                                 ? html`
-                                    <p>
-                                        ${this.hass.localize(
-                                            "ui.dialogs.more_info_control.restored.not_provided"
-                                        )}
-                                    </p>
-                                    <p>
-                                        ${this.hass.localize(
-                                            "ui.dialogs.more_info_control.restored.remove_intro"
-                                        )}
-                                    </p>
+                                    <p>${this.hass.localize("ui.dialogs.more_info_control.restored.not_provided")}</p>
+                                    <p>${this.hass.localize("ui.dialogs.more_info_control.restored.remove_intro")}</p>
                                     <mwc-button
                                         class="warning"
-                                        @click=${this._removeEntity}
-                                    >
-                                        ${this.hass.localize(
-                                            "ui.dialogs.more_info_control.restored.remove_action"
-                                        )}
+                                        @click=${this._removeEntity}>
+                                        ${this.hass.localize("ui.dialogs.more_info_control.restored.remove_action")}
                                     </mwc-button>
-                                `
-                                : ""}
+                                    `
+                                : ""
+                            }
                             `
                         : html`
                             ${this._computeShowHistoryComponent()
-                            ? html`
-                                <ha-more-info-history
-                                    .hass=${this.hass}
-                                    .entityId=${this._entityId}
-                                ></ha-more-info-history>`
-                            : ""}
+                                ? html`
+                                    <ha-more-info-history
+                                        .hass=${this.hass}
+                                        .entityId=${this._entityId}>
+                                    </ha-more-info-history>`
+                                : ""
+                            }
                             ${this._computeShowLogBookComponent(entityId) 
-                            ? html`
-                                <ha-more-info-logbook
-                                    .hass=${this.hass}
-                                    .entityId=${this._entityId}
-                                ></ha-more-info-logbook>`
-                            : ""}
+                                ? html`
+                                    <ha-more-info-logbook
+                                        .hass=${this.hass}
+                                        .entityId=${this._entityId}
+                                    ></ha-more-info-logbook>`
+                                : ""
+                            }
                             `
                     )}
                 </div>
@@ -210,12 +228,8 @@ export class ReactMoreInfoDialog extends LitElement {
     private _removeEntity() {
         const entityId = this._entityId!;
         showConfirmationDialog(this, {
-            title: this.hass.localize(
-                "ui.dialogs.more_info_control.restored.confirm_remove_title"
-            ),
-            text: this.hass.localize(
-                "ui.dialogs.more_info_control.restored.confirm_remove_text"
-            ),
+            title: this.hass.localize("ui.dialogs.more_info_control.restored.confirm_remove_title"),
+            text: this.hass.localize("ui.dialogs.more_info_control.restored.confirm_remove_text"),
             confirmText: this.hass.localize("ui.common.remove"),
             dismissText: this.hass.localize("ui.common.cancel"),
             confirm: () => {
@@ -302,7 +316,6 @@ export class ReactMoreInfoDialog extends LitElement {
                     }
                 }
 
-                react-state-card-content,
                 ha-more-info-history,
                 ha-more-info-logbook:not(:last-child) {
                     display: block;
@@ -315,6 +328,6 @@ export class ReactMoreInfoDialog extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        "react-more-info-dialog": ReactMoreInfoDialog;
+        "react-details-dialog": ReactDetailsDialog;
     }
 }

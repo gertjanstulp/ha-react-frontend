@@ -12,6 +12,10 @@ if [ ! -d "./node_modules" ]; then
     yarn install
 fi
 
-./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js gen-icons-json
-./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js build-translations
+if [ ! -f "homeassistant-frontend/build/mdi/iconMetadata.json" ]; then
+    ./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js gen-icons-json
+fi
+if [ ! -f "homeassistant-frontend/build/translations/translationMetadata.json" ]; then
+    ./node_modules/.bin/gulp -f homeassistant-frontend/gulpfile.js build-translations
+fi
 ./node_modules/.bin/gulp develop

@@ -1,5 +1,5 @@
 import "../homeassistant-frontend/src/resources/ha-style";
-import "./panels/react-main-panel";
+import "./react-router";
 
 import { html, PropertyValues, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -14,7 +14,6 @@ import { isNavigationClick } from "../homeassistant-frontend/src/common/dom/is-n
 import { getStatus, websocketSubscription } from "./data/websocket";
 import { applyThemesOnElement } from "../homeassistant-frontend/src/common/dom/apply_themes_on_element";
 import { fireEvent } from "../homeassistant-frontend/src/common/dom/fire_event";
-import { PolymerElement } from "@polymer/polymer";
 import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-dialog-manager";
 
 @customElement("react-frontend")
@@ -45,7 +44,7 @@ class ReactFrontend extends ReactElement {
         );
         this._updateProperties();
         if (this.route.path === "") {
-            navigate("/react/workflows", { replace: true });
+            navigate("/react/entry", { replace: true });
         }
    
         window.addEventListener("haptic", (ev) => {
@@ -113,32 +112,22 @@ class ReactFrontend extends ReactElement {
         }
 
         return html`
-            <react-main-panel
+            <react-router
                 .hass=${this.hass}
                 .react=${this.react}
                 .route=${this.route}
                 .narrow=${this.narrow}
-            ></react-main-panel>
+            ></react-router>
         `;
     }
     
     protected updatePageEl(el) {
         const hass = this.hass;
 
-        if ("setProperties" in el) {
-            // As long as we have Polymer panels
-            (el as PolymerElement).setProperties({
-                hass: this.hass,
-                react: this.react,
-                route: this.route,
-                narrow: this.narrow,
-            });
-        } else {
-            el.hass = hass;
-            el.react = this.react;
-            el.route = this.route;
-            el.narrow = this.narrow;
-        }
+        el.hass = hass;
+        el.react = this.react;
+        el.route = this.route;
+        el.narrow = this.narrow;
     }
 
     static get styles() {
