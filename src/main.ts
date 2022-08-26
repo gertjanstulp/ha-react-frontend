@@ -1,4 +1,5 @@
 import "../homeassistant-frontend/src/resources/ha-style";
+import "../homeassistant-frontend/src/resources/roboto";
 import "./react-router";
 
 import { html, PropertyValues, TemplateResult } from "lit";
