@@ -4,10 +4,11 @@ const webserver = require("../webserver");
 
 require("./clean.js");
 require("./translations.js");
+require("./gen-icons-json.js")
 require("./compress.js");
 require("./webpack.js");
 require("./entrypoint.js");
-
+require("./dummies.js")
 
 gulp.task(
     "develop",
@@ -17,6 +18,8 @@ gulp.task(
         },
         "clean",
         "generate-translations",
+        "gen-icons-json",
+        "dummies",
         "webpack-watch"
     )
 );
@@ -29,6 +32,8 @@ gulp.task(
         },
         "clean",
         "generate-translations",
+        "gen-icons-json",
+        "dummies",
         "webpack-prod",
         // Don't compress running tests
         ...(["compress"]),
