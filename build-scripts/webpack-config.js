@@ -103,12 +103,12 @@ const createWebpackConfig = ({
                     );
                 },
             }),
-            new webpack.NormalModuleReplacementPlugin(
-                new RegExp(
-                    bundle.emptyPackages().join("|")
-                ),
-                path.resolve(paths.polymer_dir, "src/util/empty.js")
-            ),
+            // new webpack.NormalModuleReplacementPlugin(
+            //     new RegExp(
+            //         bundle.emptyPackages().join("|")
+            //     ),
+            //     path.resolve(paths.polymer_dir, "src/util/empty.js")
+            // ),
             !isProdBuild && new lscp.LogStartCompilePlugin(),
             new ep.EntrypointPlugin(),
             !isProdBuild && new wsp.WebServerPlugin(),
@@ -126,7 +126,7 @@ const createWebpackConfig = ({
                 "lit/directives/cache$": "lit/directives/cache.js",
                 "lit/directives/repeat$": "lit/directives/repeat.js",
                 "lit/polyfill-support$": "lit/polyfill-support.js",
-                "@lit-labs/virtualizer/layouts/grid":
+                "@lit-labs/virtualizer/layouts/grid": 
                 "@lit-labs/virtualizer/layouts/grid.js",
             },
         },

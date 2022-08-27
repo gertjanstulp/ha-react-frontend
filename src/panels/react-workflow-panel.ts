@@ -170,20 +170,20 @@ class ReactWorkflowPanel extends LitElement {
     );
   
     protected render(): TemplateResult {
-      return html`
-        <hass-tabs-subpage-data-table
-            .hass=${this.hass}
-            .narrow=${this.narrow}
-            back-path="/react/entry"
-            id="entity_id"
-            .route=${this.route}
-            .tabs=${this.react.sections}
-            .columns=${this._columns(this.narrow, this.hass.locale)}
-            .data=${this._workflows(this.workflows, this._filteredWorkflows)}
-            .noDataText=${this.react.localize("ui.panel.workflow.picker.no_workflows")}
-        >
-        </hass-tabs-subpage-data-table>
-      `;
+        return html`
+            <hass-tabs-subpage-data-table
+                .hass=${this.hass}
+                .narrow=${this.narrow}
+                back-path="/react/entry"
+                id="entity_id"
+                .route=${this.route}
+                .tabs=${this.react.sections}
+                .columns=${this._columns(this.narrow, this.hass.locale)}
+                .data=${this._workflows(this.workflows, this._filteredWorkflows)}
+                .noDataText=${this.react.localize("ui.panel.workflow.picker.no_workflows")}
+            >
+            </hass-tabs-subpage-data-table>
+        `;
     }
   
     private _showInfo(workflow: WorkflowEntity) {
