@@ -8,6 +8,7 @@ gulp.task("clean", (task) => {
         "./react_frontend/**/*.gz", 
         "./react_frontend/**/*.map",
         "./react_frontend/**/*.txt",
+        "./homeassistant-frontend/build/*"
     ]);
     task();
 });

@@ -25,9 +25,9 @@ const createWebpackConfig = ({
     const ignorePackages = bundle.ignorePackages();
     return {
         mode: isProdBuild ? "production" : "development",
-        target: ["web", "es2017"],
+        target: ["web", "es5"],
         devtool: isProdBuild
-            ? false
+            ? "cheap-module-source-map"
             : "eval-cheap-module-source-map",
         entry,
         node: false,
@@ -54,7 +54,7 @@ const createWebpackConfig = ({
             minimizer: [
                 new TerserPlugin({
                     parallel: true,
-                    extractComments: false,
+                    extractComments: true,
                     terserOptions: bundle.terserOptions(),
                 }),
             ],
@@ -103,12 +103,12 @@ const createWebpackConfig = ({
                     );
                 },
             }),
-            new webpack.NormalModuleReplacementPlugin(
-                new RegExp(
-                    bundle.emptyPackages().join("|")
-                ),
-                path.resolve(paths.polymer_dir, "src/util/empty.js")
-            ),
+            // new webpack.NormalModuleReplacementPlugin(
+            //     new RegExp(
+            //         bundle.emptyPackages().join("|")
+            //     ),
+            //     path.resolve(paths.polymer_dir, "src/util/empty.js")
+            // ),
             !isProdBuild && new lscp.LogStartCompilePlugin(),
             new ep.EntrypointPlugin(),
             !isProdBuild && new wsp.WebServerPlugin(),
@@ -126,7 +126,7 @@ const createWebpackConfig = ({
                 "lit/directives/cache$": "lit/directives/cache.js",
                 "lit/directives/repeat$": "lit/directives/repeat.js",
                 "lit/polyfill-support$": "lit/polyfill-support.js",
-                "@lit-labs/virtualizer/layouts/grid":
+                "@lit-labs/virtualizer/layouts/grid": 
                 "@lit-labs/virtualizer/layouts/grid.js",
             },
         },
@@ -147,15 +147,12 @@ const createWebpackConfig = ({
         experiments: {
             topLevelAwait: true,
         },
-        performance: {
-            hints: false,
-        }
     };
 };
 
-const createConfig = ({ isProdBuild }) =>
+const createConfig = ({ isProdBuild, latestBuild, isStatsBuild }) =>
     createWebpackConfig(
-        bundle.config.app({ isProdBuild })
+        bundle.config.app({ isProdBuild, latestBuild, isStatsBuild })
     );
 
 module.exports = {

@@ -41,9 +41,6 @@ jobs:
           cat ./react_frontend/version.py
           cat ./src/version.ts
       
-      - name: Bootstrap Home Assistant
-        run: homeassistant-frontend/script/bootstrap
-      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

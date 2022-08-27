@@ -20,13 +20,15 @@ module.exports.emptyPackages = () =>
         require.resolve("@polymer/font-roboto/roboto.js"),
         require.resolve("@vaadin/vaadin-material-styles/typography.js"),
         require.resolve("@vaadin/vaadin-material-styles/font-icons.js"),
-        // wrapped in require.resolve so it blows up if file no longer exists
-        require.resolve(
-            path.resolve(paths.polymer_dir, "src/resources/compatibility.ts")
-        ),
-        // This polyfill is loaded in workers to support ES5, filter it out.
-        require.resolve("proxy-polyfill/src/index.js"),
-        // Icons in supervisor conflict with icons in HA so we don't load.
+        // // Compatibility not needed for latest builds
+        // latestBuild &&
+        // // wrapped in require.resolve so it blows up if file no longer exists
+        // require.resolve(
+        //     path.resolve(paths.polymer_dir, "src/resources/compatibility.ts")
+        // ),
+        // // This polyfill is loaded in workers to support ES5, filter it out.
+        // latestBuild && require.resolve("proxy-polyfill/src/index.js"),
+        // // Icons in supervisor conflict with icons in HA so we don't load.
         // isHassioBuild &&
         // require.resolve(
         //     path.resolve(paths.polymer_dir, "src/components/ha-icon.ts")
@@ -39,7 +41,7 @@ module.exports.emptyPackages = () =>
 
 module.exports.definedVars = ({ isProdBuild, defineOverlay }) => ({
     __DEV__: !isProdBuild,
-    __BUILD__: JSON.stringify("latest"),
+    __BUILD__: JSON.stringify("es5"),
     __VERSION__: JSON.stringify(env.version()),
     __DEMO__: false,
     __SUPERVISOR__: false,
@@ -52,8 +54,8 @@ module.exports.definedVars = ({ isProdBuild, defineOverlay }) => ({
 });
 
 module.exports.terserOptions = () => ({
-    safari10: false,
-    ecma: undefined,
+    safari10: true,
+    ecma: 5,
     output: { comments: false },
 });
 
@@ -61,10 +63,33 @@ module.exports.babelOptions = () => ({
     babelrc: false,
     compact: false,
     presets: [
+        [
+            "@babel/preset-env",
+            {
+                useBuiltIns: "entry",
+                corejs: "3.15",
+                bugfixes: true,
+            },
+        ],
         "@babel/preset-typescript",
     ].filter(Boolean),
     plugins: [
-         // Only support the syntax, Webpack will handle it.
+        [
+            path.resolve(
+                paths.polymer_dir,
+                "build-scripts/babel-plugins/inline-constants-plugin.js"
+            ),
+            {
+                modules: ["@mdi/js"],
+                ignoreModuleNotFound: true,
+            },
+        ],
+        // Part of ES2018. Converts {...a, b: 2} to Object.assign({}, a, {b: 2})
+        [
+            "@babel/plugin-proposal-object-rest-spread",
+            { loose: true, useBuiltIns: true },
+        ],
+        // Only support the syntax, Webpack will handle it.
         "@babel/plugin-syntax-import-meta",
         "@babel/plugin-syntax-dynamic-import",
         "@babel/plugin-syntax-top-level-await",
@@ -88,7 +113,6 @@ const outputPath = (outputRoot) =>
 const publicPath = (root = "") =>
     `${root}/reactfiles/frontend/`;
 
-
 module.exports.config = {
     app({ isProdBuild }) {
         return {
@@ -105,6 +129,9 @@ module.exports.config = {
             outputPath: outputPath(paths.output_root),
             publicPath: publicPath(),
             isProdBuild,
+            defineOverlay: {
+                __BACKWARDS_COMPAT__: true,
+            },
         };
     },
 };
