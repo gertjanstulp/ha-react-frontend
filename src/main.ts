@@ -39,11 +39,8 @@ class ReactFrontend extends ReactElement {
             ReactDispatchEvent.STATUS
         );
         
-        this.hass.connection.subscribeEvents(
-            async () => this._updateProperties("lovelace"),
-                "lovelace_updated"
-        );
         this._updateProperties();
+
         if (this.route.path === "") {
             navigate("/react/entry", { replace: true });
         }

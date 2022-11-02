@@ -1,13 +1,8 @@
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
-import { Workflow, Configuration, Status, Message } from "./common";
+import { Configuration, Status } from "./common";
 
 export interface React {
     language: string;
-    messages: Message[];
-    updates: any[];
-    resources: any[];
-    workflows: Workflow[];
-    removed: any[];
     sections: any;
     configuration: Configuration;
     status: Status;
@@ -24,29 +19,38 @@ export const triggerWorkflow = (
     });
 };
 
-export const triggerReaction = (
+export const runNow = (
     hass: HomeAssistant,
-    entityId: string
+    runId: string
 ) => {
-    hass.callService("react", "trigger_reaction", {
-        entity_id: entityId,
+    hass.callService("react", "run_now", {
+        run_id: runId,
     });
 };
 
-export const deleteReaction = (
+export const deleteRun = (
     hass: HomeAssistant,
-    entityId: string
+    runId: string
 ) => {
-    hass.callService("react", "delete_reaction", {
-        entity_id: entityId,
+    hass.callService("react", "delete_run", {
+        run_id: runId,
     });
 };
 
 export const reactNow = (
     hass: HomeAssistant,
-    entityId: string
+    reactionId: string
 ) => {
     hass.callService("react", "react_now", {
-        entity_id: entityId,
+        reaction_id: reactionId,
+    });
+};
+
+export const deleteReaction = (
+    hass: HomeAssistant,
+    reactionId: string
+) => {
+    hass.callService("react", "delete_reaction", {
+        reaction_id: reactionId,
     });
 };

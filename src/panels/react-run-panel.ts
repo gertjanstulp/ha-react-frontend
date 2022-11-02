@@ -2,6 +2,7 @@ import {
     mdiDelete,
     mdiInformationOutline,
     mdiPlay,
+    mdiPlayCircleOutline,
 } from "@mdi/js";
 import "../../homeassistant-frontend/src/components/entity/ha-entity-toggle";
 import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
@@ -15,18 +16,20 @@ import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
+import { Run } from "../data/entities";
 // import { computeStateName } from "../../homeassistant-frontend/src/common/entity/compute_state_name";
 import { DataTableColumnContainer } from "../../homeassistant-frontend/src/components/data-table/ha-data-table";
+import { UNAVAILABLE_STATES } from "../../homeassistant-frontend/src/data/entity";
+// import { fireEvent } from "../../homeassistant-frontend/src/common/dom/fire_event";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
-import { deleteReaction, React, reactNow } from "../data/react"
+import { deleteRun, React, runNow } from "../data/react"
 import { formatDateTime } from "../tools/datetime";
 import { showConfirmationDialog } from "../../homeassistant-frontend/src/dialogs/generic/show-dialog-box";
 import { SubscribeMixin } from "../../homeassistant-frontend/src/mixins/subscribe-mixin";
-import { Reaction } from "../data/entities";
 // import { UnsubscribeFunc } from "home-assistant-js-websocket";
 
-@customElement("react-reaction-panel")
-class ReactReactionPanel extends SubscribeMixin(LitElement) {
+@customElement("react-run-panel")
+class ReactRunPanel extends SubscribeMixin(LitElement) {
     @property({ attribute: false }) public hass!: HomeAssistant;
 
     @property({ attribute: false }) public react!: React;
@@ -36,14 +39,14 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
     @property({ type: Boolean }) public narrow!: boolean;
     
     @property({ type: Boolean }) public isWide!: boolean;
+    
+    @property() public runs!: Run[];
 
-    @property() public reactions!: Reaction[];
-  
     private _columns = memoizeOne(
         (narrow: boolean, _locale): DataTableColumnContainer => {
             const columns: DataTableColumnContainer = {
                 workflow_id: {
-                    title: this.react.localize("ui.panel.reaction.picker.headers.workflow"),
+                    title: this.react.localize("ui.panel.run.picker.headers.workflow"),
                     sortable: true,
                     filterable: true,
                     direction: "asc",
@@ -53,7 +56,7 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
                             html`
                                 ${workflow_id}
                                 <div class="secondary">
-                                ${this.react.localize("ui.panel.reaction.picker.headers.when")}:
+                                ${this.react.localize("ui.panel.run.picker.headers.when")}:
                                 ${run.attributes.when
                                     ? formatDateTime(
                                         new Date(run.attributes.when),
@@ -66,42 +69,40 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
                 },
             };
             if (!narrow) {
-                columns.run_id = {
-                    sortable: true,
-                    width: "10%",
-                    title: this.react.localize("ui.panel.reaction.picker.headers.run"),
-                    template: (run_id) => html`${run_id}`,
-                };
-                columns.reactor_id = {
+                columns.id = {
                     sortable: true,
                     width: "20%",
-                    title: this.react.localize("ui.panel.reaction.picker.headers.reactor"),
-                    template: (reactor_id) => html`${reactor_id}`,
+                    title: this.react.localize("ui.panel.run.picker.headers.id"),
+                    template: (id) => html`${id}`,
                 };
-                columns.wait_type = {
-                    sortable: true,
-                    width: "10%",
-                    title: this.react.localize("ui.panel.reaction.picker.headers.wait_type"),
-                    template: (wait_type) => 
-                        wait_type == 1 || wait_type == 2 || wait_type == 3 ? 
-                            html`${this.react.localize("ui.panel.reaction.picker.wait_types." + wait_type)}` :
-                        ''
-                };
-                columns.when = {
+                columns.start_time = {
                     sortable: true,
                     width: "20%",
-                    title: this.react.localize("ui.panel.reaction.picker.headers.when"),
-                    template: (when) => 
-                        when 
-                            ? html`${formatDateTime(new Date(when), this.hass.locale)}`
-                            : '',
+                    title: this.react.localize("ui.panel.run.picker.headers.started"),
+                    template: (start_time) => html`
+                        ${formatDateTime(new Date(start_time), this.hass.locale)}
+                    `,
                 };
+                // columns.trigger = {
+                //     // label: this.react.localize("ui.panel.run.picker.headers.trigger"),
+                //     title: "",
+                //     width: "20%",
+                //     template: (_info, run: any) => html`
+                //         <mwc-button
+                //             .run=${run}
+                //             @click=${this._doRunNow}
+                //             .disabled=${UNAVAILABLE_STATES.includes(run.state)}
+                //         >
+                //             ${this.react.localize("ui.panel.run.picker.actions.run_now")}
+                //         </mwc-button>
+                //     `,
+                // };
             }
             columns.actions = {
                 title: "",
                 width: this.narrow ? undefined : "10%",
                 type: "overflow-menu",
-                template: (_: string, reaction: any) =>
+                template: (_: string, run: any) =>
                   html`
                     <ha-icon-overflow-menu
                       .hass=${this.hass}
@@ -109,21 +110,21 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
                       .items=${[
                         {
                             path: mdiInformationOutline,
-                            label: this.react.localize("ui.panel.reaction.picker.actions.info"),
-                            action: () => this._showInfo(reaction),
+                            label: this.react.localize("ui.panel.run.picker.actions.info"),
+                            action: () => this._showInfo(run),
                         },
                         {
                             path: mdiPlay,
-                            label: this.react.localize("ui.panel.reaction.picker.actions.react_now"),
-                            action: () => this._reactNow(reaction),
+                            label: this.react.localize("ui.panel.run.picker.actions.run_now"),
+                            action: () => this._runNow(run),
                         },
                         {
                             divider: true,
                         },
                         {
                             path: mdiDelete,
-                            label: this.react.localize("ui.panel.reaction.picker.actions.delete"),
-                            action: () => this._delete(reaction),
+                            label: this.react.localize("ui.panel.run.picker.actions.delete"),
+                            action: () => this._delete(run),
                             warning: true,
                         },
                       ]}
@@ -131,6 +132,41 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
                     </ha-icon-overflow-menu>
                   `,
             };
+            // columns.actions = {
+            //     title: "",
+            //     label: this.react.localize("ui.panel.run.picker.headers.actions"),
+            //     type: "overflow-menu",
+            //     width: "7%",
+            //     template: (_info, run: any) => html`
+            //         <ha-icon-overflow-menu
+            //         .hass=${this.hass}
+            //         .narrow=${this.narrow}
+            //         .items=${[
+            //             // Info Button
+            //             {
+            //                 path: mdiInformationOutline,
+            //                 label: this.react.localize("ui.panel.run.picker.actions.info"),
+            //                 action: () => this._showInfo(run),
+            //             },
+            //             // Delete Button
+            //             {
+            //                 path: mdiDelete,
+            //                 label: this.react.localize("ui.panel.run.picker.actions.delete"),
+            //                 action: () => this._delete(run),
+            //             },
+            //             // Run Now Button
+            //             {
+            //                 path: mdiPlayCircleOutline,
+            //                 label: this.react.localize("ui.panel.run.picker.actions.run_now"),
+            //                 narrowOnly: true,
+            //                 action: () => this._runNow(run),
+            //             },
+            //         ]}
+            //         style="color: var(--secondary-text-color)"
+            //         >
+            //         </ha-icon-overflow-menu>
+            //     `,
+            // };
             return columns;
         }
     );
@@ -145,38 +181,38 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
             .route=${this.route}
             .tabs=${this.react.sections}
             .columns=${this._columns(this.narrow, this.hass.locale)}
-            .data=${this.reactions}
+            .data=${this.runs}
             .noDataText=${this.react.localize(
-                "ui.panel.reaction.picker.no_reactions"
+                "ui.panel.run.picker.no_runs"
             )}
         >
         </hass-tabs-subpage-data-table>
       `;
     }
   
-    private _showInfo(reaction: Reaction) {
-        // const entityId = reaction.entityId;
+    private _showInfo(run: Run) {
+        // const entityId = run.entity_id;
         // fireEvent(this, "hass-more-info", { entityId });
     }
 
-    private _delete(reaction: Reaction) {
+    private _delete(run: Run) {
         showConfirmationDialog(this, {
-            title: this.react.localize("ui.dialogs.confirm_delete_reaction.title"),
-            text: this.react.localize("ui.dialogs.confirm_delete_reaction.text"),
+            title: this.react.localize("ui.dialogs.confirm_delete_run.title"),
+            text: this.react.localize("ui.dialogs.confirm_delete_run.text"),
             confirmText: this.hass.localize("ui.common.remove"),
             dismissText: this.hass.localize("ui.common.cancel"),
             confirm: () => {
-                deleteReaction(this.hass, reaction.id);
+                deleteRun(this.hass, run.id);
             },
         });
     }
-    
-    private _doReactNow = (ev) => {
-        this._reactNow(ev.currentTarget.reaction);
+
+    private _doRunNow = (ev) => {
+        this._runNow(ev.currentTarget.run);
     };
   
-    private _reactNow = (reaction: Reaction) => {
-        reactNow(this.hass, reaction.id);
+    private _runNow = (run: Run) => {
+        runNow(this.hass, run.id);
     };
   
     static get styles(): CSSResultGroup {
@@ -186,7 +222,7 @@ class ReactReactionPanel extends SubscribeMixin(LitElement) {
   
 declare global {
     interface HTMLElementTagNameMap {
-        "react-reaction-panel": ReactReactionPanel;
+        "react-run-panel": ReactRunPanel;
     }
 }
   

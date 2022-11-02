@@ -5,20 +5,31 @@ import {
     mdiChevronDown,
     mdiChevronUp,
     mdiClose,
-    mdiMathNorm,
+    mdiPauseCircleOutline,
+    mdiCalendarRemove,
+    mdiArrowAll,
     mdiTimerOutline,
+    mdiUndo,
+    mdiArrowULeftTop,
+    mdiArrowULeftBottom,
+    mdiUndoVariant,
+    mdiGestureDoubleTap,
+    mdiCodeBraces,
+    mdiShuffleDisabled,
+    mdiRefresh,
 } from "@mdi/js";
 import { css, html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../homeassistant-frontend/src/common/dom/fire_event";
 import { BRANCH_HEIGHT, NODE_SIZE, SPACING } from "../../../homeassistant-frontend/src/components/trace/hat-graph-const";
-import { ActorConfig, ConditionConfig, ParallelConfig, ReactorConfig, WorkflowTraceExtended } from "../../data/trace";
+import { ActorConfig, ConditionConfig, DelayConfig, ParallelConfig, ReactorConfig, DispatchConfig, ResetConfig, ScheduleConfig, StateConfig, WorkflowTraceExtended } from "../../data/trace";
 import "../../../homeassistant-frontend/src/components/ha-icon-button"
-import "../../../homeassistant-frontend/src/components/trace/hat-graph-branch";
 import "../../../homeassistant-frontend/src/components/trace/hat-graph-node";
 import "../../../homeassistant-frontend/src/components/trace/hat-graph-spacer";
 import { ensureArray } from "../../../homeassistant-frontend/src/common/ensure-array";
 import { ConditionTraceStep } from "../../../homeassistant-frontend/src/data/trace";
+
+import "./react-graph-branch"
 
 export interface NodeInfo {
     path: string;
@@ -92,40 +103,62 @@ export class ReactScriptGraph extends LitElement {
         disabled = false
     ) {
         const basePath = `reactor/${idx}`;
-        const eventPath = `${basePath}/event`
+        const dispatchPath = `${basePath}/dispatch`
         const conditionPath = `${basePath}/condition`
-        const track = this.trace && eventPath in this.trace.trace;
-        this.renderedNodes[eventPath] = { config: config.event, path: eventPath };
-        if (track) {
-            this.trackedNodes[eventPath] = this.renderedNodes[eventPath];
-        }
+        const delayPath = `${basePath}/delay`
+        const schedulePath = `${basePath}/schedule`
+        const statePath = `${basePath}/state`
+        const resetPath = `${basePath}/reset`
+
         const condition_info = this.get_condition_info(conditionPath)
-        if (config.condition) {
-            return html`
-                <div ?track=${track || (condition_info.has_condition && condition_info.trackFailed)}>
-                    ${this.render_condition_node(config.condition, conditionPath, false, config.event.enabled === false)}
-                    ${this.render_reactor_node(config, track, eventPath, disabled)}
-                </div>
+        
+        const track_dispatch = this.trace && dispatchPath in this.trace.trace
+        const track_reset = this.trace && resetPath in this.trace.trace
+        const track_state = this.trace && statePath in this.trace.trace
+        const track_delay = this.trace && delayPath in this.trace.trace
+        const track_schedule = this.trace && schedulePath in this.trace.trace
+
+        return html`
+            <div notail ?track=${track_dispatch || track_reset || track_state || track_delay || track_schedule || (condition_info.has_condition && condition_info.trackFailed)}>
+                ${config.condition
+                    ? html`${this.render_condition_node(config.condition, conditionPath, false, config.dispatch.enabled === false)}` : ''
+                }
+                ${config.state
+                    ? html`${this.render_wait_node(config.state, track_state, statePath, disabled)}` : ''
+                }
+                ${config.delay
+                    ? html `${this.render_delay_node(config.delay, track_delay, delayPath, disabled)}` : ''
+                }
+                ${config.schedule
+                    ? html `${this.render_schedule_node(config.schedule, track_schedule, schedulePath, disabled)}` : ''
+                }
+
+                ${config.reset
+                    ? html`${this.render_reset_node(config.reset, track_reset, resetPath, disabled)}` 
+                    : html`${this.render_reactor_node(config.dispatch, track_dispatch, dispatchPath, disabled)}`
+                }
+            </div>
             `;
-        } else {
-            return this.render_reactor_node(config, track, eventPath, disabled)
-        }
     }
 
     private render_reactor_node(
-        config: ReactorConfig, 
+        config: DispatchConfig, 
         track: boolean, 
-        eventPath: string, 
-        disabled: boolean
+        path: string, 
+        disabled: boolean,
     ) {
+        this.renderedNodes[path] = { config: config, path: path };
+        if (track) {
+            this.trackedNodes[path] = this.renderedNodes[path];
+        }
         return html`
             <hat-graph-node
-                .iconPath=${config.event.timing === "immediate" ? mdiExclamation : mdiTimerOutline}
-                @focus=${this.selectNode(config, eventPath)}
+                .iconPath=${mdiGestureDoubleTap}
+                @focus=${this.selectNode(config, path)}
                 ?track=${track}
-                ?active=${this.selected === eventPath}
-                .notEnabled=${disabled || config.event.enabled === false}
-                tabindex=${this.trace && eventPath in this.trace.trace ? "0" : "-1"}
+                ?active=${this.selected === path}
+                .notEnabled=${disabled || config.enabled === false}
+                tabindex=${this.trace && path in this.trace.trace ? "0" : "-1"}
                 graphEnd 
             ></hat-graph-node>`
     }
@@ -143,7 +176,7 @@ export class ReactScriptGraph extends LitElement {
         const condition_info = this.get_condition_info(path)
         
         return html`
-            <hat-graph-branch
+            <react-graph-branch
                 @focus=${this.selectNode(config, path)}
                 ?track=${condition_info.track}
                 ?active=${this.selected === path}
@@ -173,7 +206,7 @@ export class ReactScriptGraph extends LitElement {
                     ?active=${this.selected === path}
                     .notEnabled=${disabled}
                 ></hat-graph-node>
-            </hat-graph-branch>
+            </react-graph-branch>
         `;
     }
 
@@ -190,7 +223,7 @@ export class ReactScriptGraph extends LitElement {
         }
         const trace: any = this.trace.trace[path];
         return html`
-            <hat-graph-branch
+            <react-graph-branch
                 tabindex=${trace === undefined ? "-1" : "0"}
                 @focus=${this.selectNode(config, path)}
                 ?track=${track}
@@ -200,7 +233,7 @@ export class ReactScriptGraph extends LitElement {
             >
                 <hat-graph-node
                     .graphStart=${graphStart}
-                    .iconPath=${mdiMathNorm}
+                    .iconPath=${mdiShuffleDisabled}
                     ?track=${track}
                     ?active=${this.selected === path}
                     .notEnabled=${disabled}
@@ -211,10 +244,93 @@ export class ReactScriptGraph extends LitElement {
                     this.render_reactor(reactor, idx)
                 )}
                 
-            </hat-graph-branch>
+            </react-graph-branch>
         `;
     }
     
+    private render_wait_node(
+        config: StateConfig,
+        track: boolean,
+        path: string,
+        disabled: boolean,
+    ) {
+        this.renderedNodes[path] = { config: config, path: path };
+        if (this.trace && path in this.trace.trace) {
+            this.trackedNodes[path] = this.renderedNodes[path];
+        }
+        return html`
+            <hat-graph-node
+                .iconPath=${mdiCodeBraces}
+                @focus=${this.selectNode(config, path)}
+                ?track=${track}
+                ?active=${this.selected === path}
+                .notEnabled=${disabled}
+                tabindex=${this.trace && path in this.trace.trace ? "0" : "-1"}
+            ></hat-graph-node>`
+    }
+
+    private render_delay_node(
+        config: DelayConfig, 
+        track: boolean, 
+        path: string,
+        disabled: boolean,
+    ) {
+        this.renderedNodes[path] = { config: config, path: path };
+        if (this.trace && path in this.trace.trace) {
+            this.trackedNodes[path] = this.renderedNodes[path];
+        }
+        return html`
+            <hat-graph-node
+                .iconPath=${mdiTimerOutline}
+                @focus=${this.selectNode(config, path)}
+                ?track=${track}
+                ?active=${this.selected === path}
+                .notEnabled=${disabled}
+                tabindex=${this.trace && path in this.trace.trace ? "0" : "-1"}
+            ></hat-graph-node>`
+    }
+
+    private render_schedule_node(
+        config: ScheduleConfig, 
+        track: boolean, 
+        path: string,
+        disabled: boolean,
+    ) {
+        this.renderedNodes[path] = { config: config, path: path };
+        if (this.trace && path in this.trace.trace) {
+            this.trackedNodes[path] = this.renderedNodes[path];
+        }return html`
+            <hat-graph-node
+                .iconPath=${mdiTimerOutline}
+                @focus=${this.selectNode(config, path)}
+                ?track=${track}
+                ?active=${this.selected === path}
+                .notEnabled=${disabled}
+                tabindex=${this.trace && path in this.trace.trace ? "0" : "-1"}
+            ></hat-graph-node>`
+    }
+
+    private render_reset_node(
+        config: ResetConfig, 
+        track: boolean, 
+        path: string,
+        disabled: boolean,
+    ) {
+        this.renderedNodes[path] = { config: config, path: path };
+        if (this.trace && path in this.trace.trace) {
+            this.trackedNodes[path] = this.renderedNodes[path];
+        }return html`
+            <hat-graph-node
+                .iconPath=${mdiRefresh}
+                @focus=${this.selectNode(config, path)}
+                ?track=${track}
+                ?active=${this.selected === path}
+                .notEnabled=${disabled}
+                tabindex=${this.trace && path in this.trace.trace ? "0" : "-1"}
+                graphEnd 
+            ></hat-graph-node>`
+    }
+
     private get_condition_info(path: string) {
         const trace = this.trace.trace[path] as ConditionTraceStep[] | undefined;
         let track = false;
@@ -246,6 +362,25 @@ export class ReactScriptGraph extends LitElement {
         }
     }
 
+    // private get_wait_info(path: string) {
+    //     let is_waiting = false
+    //     const trace = this.trace.trace[path] as EventTraceStep[];
+    //     if (trace) {
+    //         for (const trc of trace) {
+    //             if (trc.result) {
+    //                 let reaction = trc.result.reaction
+    //                 if (reaction) {
+    //                     is_waiting = reaction.waiting
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return {
+    //         is_waiting: is_waiting
+    //     } 
+    // }
+
     protected render() {
         const paths = Object.keys(this.trackedNodes);
         const actor_nodes =
@@ -256,9 +391,9 @@ export class ReactScriptGraph extends LitElement {
             return html`
                 <div class="parent graph-container">
                     ${html`
-                        <hat-graph-branch start .short=${actor_nodes.length < 2}>
+                        <react-graph-branch start .short=${actor_nodes.length < 2}>
                             ${actor_nodes}
-                        </hat-graph-branch>`
+                        </react-graph-branch>`
                     }
                     ${"parallel" in this.trace.config
                         ? html`
@@ -319,16 +454,21 @@ export class ReactScriptGraph extends LitElement {
         }
 
         if (this.trace) {
-            const sortKeys = Object.keys(this.trace.trace);
             const keys = Object.keys(this.renderedNodes).sort(
-                (a, b) => sortKeys.indexOf(a) - sortKeys.indexOf(b)
+                (a, b) => {
+                    const a_parts = a.split("/")
+                    const b_parts = b.split("/")
+                    if (a_parts[0] < b_parts[0] || (a_parts[0] == b_parts[0] && a_parts[1] < b_parts[1]))
+                        return -1
+                    return 1
+                }
             );
             const sortedTrackedNodes = {};
             const sortedRenderedNodes = {};
             for (const key of keys) {
                 sortedRenderedNodes[key] = this.renderedNodes[key];
                 if (key in this.trackedNodes) {
-                sortedTrackedNodes[key] = this.trackedNodes[key];
+                    sortedTrackedNodes[key] = this.trackedNodes[key];
                 }
             }
             this.renderedNodes = sortedRenderedNodes;

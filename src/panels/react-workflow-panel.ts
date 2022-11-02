@@ -1,14 +1,17 @@
 import {
-    mdiHistory,
+    mdiCancel,
     mdiInformationOutline,
+    mdiPlay,
     mdiPlayCircleOutline,
+    mdiStopCircleOutline,
+    mdiTransitConnection,
 } from "@mdi/js";
-import "../../homeassistant-frontend/src/components/entity/ha-entity-toggle";
 import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
+import "../../homeassistant-frontend/src/components/ha-chip";
 import "../../homeassistant-frontend/src/components/ha-fab";
 import "../../homeassistant-frontend/src/components/ha-icon-button";
-import "../../homeassistant-frontend/src/components/ha-svg-icon";
 import "../../homeassistant-frontend/src/components/ha-icon-overflow-menu";
+import "../../homeassistant-frontend/src/components/ha-svg-icon";
 import "../../homeassistant-frontend/src/layouts/hass-tabs-subpage-data-table";
 
 import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
@@ -18,7 +21,6 @@ import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { WorkflowEntity } from "../data/entities";
 import { computeStateName } from "../../homeassistant-frontend/src/common/entity/compute_state_name";
 import { DataTableColumnContainer } from "../../homeassistant-frontend/src/components/data-table/ha-data-table";
-import { UNAVAILABLE_STATES } from "../../homeassistant-frontend/src/data/entity";
 import { fireEvent } from "../../homeassistant-frontend/src/common/dom/fire_event";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { navigate } from "../../homeassistant-frontend/src/common/navigate";
@@ -66,20 +68,16 @@ class ReactWorkflowPanel extends LitElement {
     private _columns = memoizeOne(
         (narrow: boolean, _locale): DataTableColumnContainer => {
             const columns: DataTableColumnContainer = {
-                toggle: {
+                icon: {
                     title: "",
-                    label: this.react.localize("ui.panel.workflow.picker.headers.toggle"),
+                    label: this.react.localize("ui.panel.workflow.picker.headers.state"),
                     type: "icon",
-                    template: (_toggle, workflow: any) =>
-                    html`
-                        <ha-entity-toggle
-                        .hass=${this.hass}
-                        .stateObj=${workflow}
-                        ></ha-entity-toggle>
-                    `,
+                    template: (_, workflow) =>
+                        html`<ha-state-icon .state=${workflow}></ha-state-icon>`,
                 },
                 name: {
                     title: this.react.localize("ui.panel.workflow.picker.headers.name"),
+                    main: true,
                     sortable: true,
                     filterable: true,
                     direction: "asc",
@@ -110,31 +108,44 @@ class ReactWorkflowPanel extends LitElement {
                         : this.react.localize("ui.components.relative_time.never")}
                     `,
                 };
-                // Trigger column
-                columns.trigger = {
-                    label: this.react.localize("ui.panel.workflow.picker.headers.trigger"),
-                    title: "",
-                    width: "20%",
-                    template: (_info, workflow: any) => html`
-                        <mwc-button
-                            .workflow=${workflow}
-                            @click=${this._triggerTrigger}
-                            .disabled=${UNAVAILABLE_STATES.includes(workflow.state)}
-                        >
-                            ${this.react.localize("ui.panel.workflow.picker.actions.trigger")}
-                        </mwc-button>
-                    `,
-                };
             }
+
+            columns.disabled = this.narrow
+                ? {
+                    title: "",
+                    template: (_, workflow: WorkflowEntity) =>
+                        workflow.state == "off"
+                            ? html`
+                                <paper-tooltip animation-delay="0" position="left">
+                                    ${this.react.localize("ui.panel.workflow.picker.badges.disabled")}
+                                </paper-tooltip>
+                                <ha-svg-icon
+                                    .path=${mdiCancel}
+                                    style="color: var(--secondary-text-color)"
+                                ></ha-svg-icon>`
+                            : "",
+                }
+                : {
+                    width: "20%",
+                    title: "",
+                    template: (_, workflow: WorkflowEntity) =>
+                        workflow.state == "off"
+                            ? html`
+                                <ha-chip>
+                                    ${this.react.localize("ui.panel.workflow.picker.badges.disabled")}
+                                </ha-chip>`
+                            : "",
+                };
+
             columns.actions = {
                 title: "",
-                label: this.react.localize("ui.panel.workflow.picker.headers.actions"),
+                width: this.narrow ? undefined : "10%",
                 type: "overflow-menu",
-                width: "7%",
-                template: (_info, workflow: any) => html`
-                    <ha-icon-overflow-menu
+                template: (_: string, workflow: any) =>
+                    html`
+                        <ha-icon-overflow-menu
                         .hass=${this.hass}
-                        .narrow=${this.narrow}
+                        narrow
                         .items=${[
                             // Info Button
                             {
@@ -144,14 +155,14 @@ class ReactWorkflowPanel extends LitElement {
                             },
                             // Trigger Button
                             {
-                                path: mdiPlayCircleOutline,
+                                path: mdiPlay,
                                 label: this.react.localize("ui.panel.workflow.picker.actions.trigger"),
                                 narrowOnly: true,
                                 action: () => this._trigger(workflow),
                             },
                             // Trace Button
                             {
-                                path: mdiHistory,
+                                path: mdiTransitConnection,
                                 disabled: !workflow.attributes.workflow_id,
                                 label: this.react.localize("ui.panel.workflow.picker.actions.trace"),
                                 action: () => {
@@ -160,10 +171,25 @@ class ReactWorkflowPanel extends LitElement {
                                     }
                                 },
                             },
+                            {
+                                divider: true,
+                            },
+                            // Enable/disable button
+                            {
+                                path:
+                                    workflow.state === "off"
+                                        ? mdiPlayCircleOutline
+                                        : mdiStopCircleOutline,
+                                label:
+                                    workflow.state === "off"
+                                        ? this.react.localize("ui.panel.workflow.picker.actions.enable")
+                                        : this.react.localize("ui.panel.workflow.picker.actions.disable"),
+                                action: () => this._toggle(workflow),
+                              },
                         ]}
-                        style="color: var(--secondary-text-color)">
-                    </ha-icon-overflow-menu>
-                `,
+                        >
+                        </ha-icon-overflow-menu>
+                  `,
             };
             return columns;
         }
@@ -191,14 +217,16 @@ class ReactWorkflowPanel extends LitElement {
         fireEvent(this, "hass-more-info", { entityId });
     }
 
-    private _triggerTrigger = (ev) => {
-        this._trigger(ev.currentTarget.workflow);
-    };
-  
     private _trigger = (workflow: WorkflowEntity) => {
         triggerWorkflow(this.hass, workflow.entity_id);
     };
   
+    private async _toggle(workflow): Promise<void> {
+        const service = workflow.state === "off" ? "turn_on" : "turn_off";
+        await this.hass.callService("react", service, {
+            entity_id: workflow.entity_id,
+        });
+    }
   
     static get styles(): CSSResultGroup {
         return haStyle;

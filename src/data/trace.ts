@@ -1,5 +1,6 @@
 import { ActionTraceStep } from "../../homeassistant-frontend/src/data/trace";
 import { Context } from "../../homeassistant-frontend/src/types";
+import { Reaction } from "./entities";
 
 export interface WorkflowConfig {
     id?: string;
@@ -10,7 +11,7 @@ export interface WorkflowConfig {
 
 export interface ActorConfig {
     index: number,
-    runWorkflow: CtorConfig,
+    trigger: CtorConfig,
     condition: ConditionConfig;
 }
 
@@ -23,17 +24,21 @@ export interface CtorConfig {
     data: DataConfig;
 }
 
-export interface ReactorEventconfig extends CtorConfig {
-    timing: string;
+export interface DispatchConfig extends CtorConfig {
+    // timing: string;
 }
 
 export interface ReactorConfig {
-    event: ReactorEventconfig;
+    dispatch: DispatchConfig;
     condition: ConditionConfig;
+    state: StateConfig;
+    delay: DelayConfig;
+    schedule: ScheduleConfig;
+    reset: ResetConfig;
 }
 
 export interface DataConfig {
-    [key: string] : string
+    [key: string] : string;
 }
 
 export interface ParallelConfig {
@@ -42,6 +47,22 @@ export interface ParallelConfig {
 
 export interface ConditionConfig {
     template: string;
+}
+
+export interface StateConfig {
+    condition: string;
+}
+
+export interface DelayConfig {
+    seconds: number;
+}
+
+export interface ScheduleConfig {
+    at: string;
+}
+
+export interface ResetConfig {
+    reset_workflow: string;
 }
 
 interface BaseTrace {
@@ -64,13 +85,17 @@ interface BaseTraceExtended {
   
 export interface WorkflowTrace extends BaseTrace {
     domain: "react";
-    runWorkflow: string;
+    trigger: string;
 }
 
 export interface WorkflowTraceExtended extends WorkflowTrace, BaseTraceExtended {
     config: WorkflowConfig
 }
 
+export interface EventTraceStep {
+    result?: { reaction: Reaction };
+    path: string;
+}
 
 export const getDataFromPath = (
     config: WorkflowTraceExtended["config"],
