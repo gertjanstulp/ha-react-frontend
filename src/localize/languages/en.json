@@ -7,6 +7,13 @@
                 "name": "Name"
             }
         },
+        "runs": {
+            "title": "Runs",
+            "description": "Manage, disable, trigger and delete runs",
+            "columns": {
+                "name": "Name"
+            }
+        },
         "reactions": {
             "title": "Reactions",
             "description": "Manage, disable, trigger and delete reactions",
@@ -28,31 +35,59 @@
                         "name": "Name",
                         "actions": "Actions",
                         "last_triggered": "Last triggered",
-                        "trigger": "Trigger"
+                        "trigger": "Trigger",
+                        "state": "State"
                     },
                     "actions" : {
                         "info": "Info",
                         "trace": "Trace",
-                        "trigger": "Trigger"
+                        "trigger": "Trigger",
+                        "enable": "Enable",
+                        "disable": "Disable"
+                    },
+                    "badges" :{
+                        "disabled": "Disabled"
                     },
                     "no_workflows": "- no workflows -"
+                }
+            },
+            "run" : {
+                "picker": {
+                    "headers": {
+                        "id": "Id",
+                        "workflow": "Workflow",
+                        "actions": "Actions",
+                        "started": "Started"
+                    },
+                    "actions" : {
+                        "info": "Info",
+                        "delete": "Delete",
+                        "run_now": "Run now"
+                    },
+                    "no_runs": "- no runs -"
                 }
             },
             "reaction": {
                 "picker": {
                     "headers": {
-                        "toggle": "Toggle",
-                        "name": "Name",
+                        "id": "Id",
+                        "workflow": "Workflow",
+                        "run": "Run",
+                        "reactor": "Reactor",
                         "actions": "Actions",
-                        "trigger": "Trigger",
-                        "react_now": "React now",
-                        "when": "When"
+                        "created": "Created",
+                        "when": "When",
+                        "wait_type": "Wait type"
                     },
                     "actions" : {
                         "info": "Info",
                         "delete": "Delete",
-                        "trigger": "Trigger",
                         "react_now": "React now"
+                    },
+                    "wait_types" : {
+                        "1" : "State",
+                        "2" : "Delay",
+                        "3" : "Schedule"
                     },
                     "no_reactions": "- no reactions -"
                 }

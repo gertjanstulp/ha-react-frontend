@@ -3,13 +3,13 @@ import { PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { HassRouterPage, RouterOptions } from "../../homeassistant-frontend/src/layouts/hass-router-page";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
-import "./react-reaction-panel";
+import "./react-run-panel";
 import {React} from "../data/react"
-import { subscribeReactionRegistry } from "../data/websocket";
-import { Reaction } from "../data/entities";
+import { subscribeRunRegistry } from "../data/websocket";
+import { Run } from "../data/entities";
 
-@customElement("react-reaction-router")
-class ReactReactionRouter extends HassRouterPage {
+@customElement("react-run-router")
+class ReactRunRouter extends HassRouterPage {
     @property({ attribute: false }) public hass!: HomeAssistant;
 
     @property({ attribute: false }) public react!: React;
@@ -19,7 +19,7 @@ class ReactReactionRouter extends HassRouterPage {
     @property() public narrow!: boolean;
 
     @state()
-    private _reactions: Reaction[] = [];
+    private _runs: Run[] = [];
 
     private _unsubs?: UnsubscribeFunc[];
     
@@ -27,7 +27,7 @@ class ReactReactionRouter extends HassRouterPage {
         defaultPage: "dashboard",
         routes: {
             dashboard: {
-                tag: "react-reaction-panel",
+                tag: "react-run-panel",
                 cache: true,
             },
         },
@@ -69,7 +69,7 @@ class ReactReactionRouter extends HassRouterPage {
     protected updatePageEl(pageEl, changedProps: PropertyValues) {
         pageEl.hass = this.hass;
         pageEl.react = this.react;
-        pageEl.reactions = this._reactions;
+        pageEl.runs = this._runs;
         pageEl.route = this.routeTail;
         pageEl.narrow = this.narrow;
         pageEl.isWide = this.isWide;
@@ -80,8 +80,8 @@ class ReactReactionRouter extends HassRouterPage {
             return;
         }
         this._unsubs = [
-            subscribeReactionRegistry(this.hass.connection, (entries) => {
-                this._reactions = entries;
+            subscribeRunRegistry(this.hass.connection, (entries) => {
+                this._runs = entries;
             }),
         ];
     }
@@ -89,6 +89,6 @@ class ReactReactionRouter extends HassRouterPage {
 
 declare global {
     interface HTMLElementTagNameMap {
-        "react-reaction-router": ReactReactionRouter;
+        "react-run-router": ReactRunRouter;
     }
 }

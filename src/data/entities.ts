@@ -7,20 +7,11 @@ export interface WorkflowEntity extends HassEntityBase {
     };
 }
 
-
-export interface ReactionEntity extends HassEntityBase {
-    attributes: HassEntityAttributeBase & {
-        id: string;
-        workflow_id: string
-        entity: string
-        type: string
-        action: string
-        reset_workflow: string
-        overwrite: boolean
-        forward_action: boolean
-    };
+export interface Run {
+    id: string;
+    workflow_id: string;
+    start_time: string;
 }
-
 
 export interface Action {
     id: string;
@@ -31,7 +22,9 @@ export interface Action {
 
 export interface Reaction{
     id: string;
-    entity: string;
-    type: string;
-    action: string
+    workflow_id: string;
+    reactor_id: string;
+    created: string;
+    when: string;
+    wait_type: string;
 }

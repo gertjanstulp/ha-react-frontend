@@ -6,6 +6,7 @@ import { React } from "./data/react";
 import { localize } from "./localize/localize";
 import { sectionsEnabled } from "./panels/react-sections";
 import { ReactLogger } from "./tools/react-logger";
+import { computeRTLDirection, setDirectionStyles } from "../homeassistant-frontend/src/common/util/compute_rtl";
 
 export class ReactElement extends LitElement {
     private _customElementsDefine: ((name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) => void) = function() {}
@@ -62,23 +63,18 @@ export class ReactElement extends LitElement {
         if (this.react === undefined) {
             this.react = {
                 language: "en",
-                messages: [],
-                updates: [],
-                resources: [],
-                workflows: [],
-                removed: [],
                 sections: [],
                 configuration: {} as any,
                 status: {} as any,
                 localize: (string: string, replace?: Record<string, any>) =>
-                localize(this.react?.language || "en", string, replace),
+                    localize(this.react?.language || "en", string, replace),
                 log: new ReactLogger(),
             };
         }
         
-        this.addEventListener("update-react", (e) =>
-            this._updateReact((e as any).detail as Partial<React>)
-        );
+        // this.addEventListener("update-react", (e) =>
+        //     this._updateReact((e as any).detail as Partial<React>)
+        // );
     }
     
     protected _updateReact(obj: Partial<React>) {
@@ -103,11 +99,20 @@ export class ReactElement extends LitElement {
             this.__provideHass.forEach((el) => {
                 (el as any).hass = this.hass;
             });
+
+            this.setRtl()
         }
         
         if (this.react.language && this.react.configuration) {
             this.react.sections = sectionsEnabled(this.react.language, this.react.configuration);
         }
+    }
+
+    private setRtl() {
+        document.querySelector("html")!.setAttribute("lang", this.hass.language);
+        const direction = computeRTLDirection(this.hass);
+        document.dir = direction;
+        setDirectionStyles(direction, this);
     }
 
     // Implements 'provide-hass' behavior as required by showDialog method

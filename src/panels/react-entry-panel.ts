@@ -1,9 +1,11 @@
 import "@material/mwc-button/mwc-button";
+import "@material/mwc-list/mwc-list";
 import { mdiInformation } from "@mdi/js";
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../homeassistant-frontend/src/components/ha-alert";
 import "../../homeassistant-frontend/src/components/ha-card";
+import "../../homeassistant-frontend/src/components/ha-clickable-list-item";
 import "../../homeassistant-frontend/src/components/ha-menu-button";
 import "../../homeassistant-frontend/src/components/ha-svg-icon";
 import "../../homeassistant-frontend/src/layouts/ha-app-layout";

@@ -1,5 +1,5 @@
 import memoizeOne from "memoize-one";
-import { mdiExclamation, mdiSwapHorizontalBold } from "@mdi/js";
+import { mdiExclamation, mdiSitemap, mdiSitemapOutline, mdiSwapHorizontalBold } from "@mdi/js";
 
 import { Route } from "../../homeassistant-frontend/src/types";
 
@@ -11,13 +11,24 @@ export const sections = (language: string) => ({
     react: [
       {
         // categories: ["integration"],
-        iconPath: mdiSwapHorizontalBold,
+        iconPath: mdiSitemapOutline,
         id: "workflow",
         // iconColor: "rgb(13, 71, 161)",
         iconColor: "#3c8dc3",
         description: localize(language, "sections.workflows.description"),
         name: localize(language, "sections.workflows.title"),
         path: "/react/workflow",
+        core: true,
+      },
+      {
+        // categories: ["plugin", "theme"],
+        iconPath: mdiSwapHorizontalBold,
+        id: "run",
+        // iconColor: "rgb(177, 52, 92)",
+        iconColor: "#B1345C",
+        description: localize(language, "sections.runs.description"),
+        name: localize(language, "sections.runs.title"),
+        path: "/react/run",
         core: true,
       },
       {

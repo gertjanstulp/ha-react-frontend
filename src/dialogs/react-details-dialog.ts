@@ -8,7 +8,7 @@ import { computeStateName } from "../../homeassistant-frontend/src/common/entity
 import { removeEntityRegistryEntry } from "../../homeassistant-frontend/src/data/entity_registry";
 import { showConfirmationDialog } from "../../homeassistant-frontend/src/dialogs/generic/show-dialog-box";
 import { replaceDialog } from "../../homeassistant-frontend/src/dialogs/make-dialog-manager";
-import { showEntityEditorDialog } from "../../homeassistant-frontend/src/panels/config/entities/show-dialog-entity-editor";
+// import { showEntityEditorDialog } from "../../homeassistant-frontend/src/panels/config/entities/show-dialog-entity-editor";
 import { haStyleDialog } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
 import { React } from "../data/react"
@@ -167,13 +167,7 @@ export class ReactDetailsDialog extends LitElement {
                             }
                             ${stateObj.attributes.restored
                                 ? html`
-                                    <p>${this.hass.localize("ui.dialogs.more_info_control.restored.not_provided")}</p>
-                                    <p>${this.hass.localize("ui.dialogs.more_info_control.restored.remove_intro")}</p>
-                                    <mwc-button
-                                        class="warning"
-                                        @click=${this._removeEntity}>
-                                        ${this.hass.localize("ui.dialogs.more_info_control.restored.remove_action")}
-                                    </mwc-button>
+                                    
                                     `
                                 : ""
                             }
@@ -228,8 +222,8 @@ export class ReactDetailsDialog extends LitElement {
     private _removeEntity() {
         const entityId = this._entityId!;
         showConfirmationDialog(this, {
-            title: this.hass.localize("ui.dialogs.more_info_control.restored.confirm_remove_title"),
-            text: this.hass.localize("ui.dialogs.more_info_control.restored.confirm_remove_text"),
+            title: "ui.dialogs.more_info_control.restored.confirm_remove_title",
+            text: "ui.dialogs.more_info_control.restored.confirm_remove_text",
             confirmText: this.hass.localize("ui.common.remove"),
             dismissText: this.hass.localize("ui.common.cancel"),
             confirm: () => {
@@ -239,11 +233,11 @@ export class ReactDetailsDialog extends LitElement {
     }
 
     private _gotoSettings() {
-        replaceDialog(this);
-        showEntityEditorDialog(this, {
-            entity_id: this._entityId!,
-        });
-        this.closeDialog();
+        // replaceDialog(this);
+        // showEntityEditorDialog(this, {
+        //     entity_id: this._entityId!,
+        // });
+        // this.closeDialog();
     }
 
     

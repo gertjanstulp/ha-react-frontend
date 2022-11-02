@@ -239,8 +239,7 @@ export class ReactWorkflowTrace extends LitElement {
         }
     
         if (changedProps.has("_runId") && this._runId) {
-            this._trace = undefined;
-            this._loadTrace();
+            this._refreshCurrentTrace()
         }
     
         if (
@@ -278,8 +277,15 @@ export class ReactWorkflowTrace extends LitElement {
   
     private _refreshTraces() {
         this._loadTraces();
+        this._refreshCurrentTrace()
     }
   
+    private _refreshCurrentTrace() {
+        this._trace = undefined
+        this._loadTrace()
+        this._selected = undefined;
+    }
+
     private async _loadTraces(runId?: string) {
         this._traces = await loadTraces(this.hass, this.workflowId);
         // Newest will be on top.
@@ -317,6 +323,7 @@ export class ReactWorkflowTrace extends LitElement {
         if (!this._runId && this._traces.length > 0) {
             this._runId = this._traces[0].run_id;
         }
+        
     }
   
     private async _loadTrace() {

@@ -27,6 +27,10 @@ class ReactRouter extends HassRouterPage {
                 tag: "react-workflow-router",
                 load: () => import("./panels/react-workflow-router"),
             },
+            run: {
+                tag: "react-run-router",
+                load: () => import("./panels/react-run-router"),
+            },
             reaction: {
                 tag: "react-reaction-router",
                 load: () => import("./panels/react-reaction-router"),
