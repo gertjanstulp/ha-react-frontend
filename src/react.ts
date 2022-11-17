@@ -20,21 +20,17 @@ export class ReactElement extends LitElement {
     protected firstUpdated(changedProps: PropertyValues) {
         super.firstUpdated(changedProps);
         this.addEventListener("hass-more-info", (ev) => this._handleMoreInfo(ev));
-        
-        // Load it once we are having the initial rendering done.
-        import("./dialogs/react-details-dialog")
     }
     
     private async _handleMoreInfo(ev) {
         showDialog(
             this,
             this.shadowRoot!,
-            "react-details-dialog",
+            "ha-more-info-dialog",
             {
                 entityId: ev.detail.entityId,
-                react: this.react
             },
-            () => import("./dialogs/react-details-dialog")
+            () => import("../homeassistant-frontend/src/dialogs/more-info/ha-more-info-dialog")
         );
     }
         
@@ -71,10 +67,6 @@ export class ReactElement extends LitElement {
                 log: new ReactLogger(),
             };
         }
-        
-        // this.addEventListener("update-react", (e) =>
-        //     this._updateReact((e as any).detail as Partial<React>)
-        // );
     }
     
     protected _updateReact(obj: Partial<React>) {
