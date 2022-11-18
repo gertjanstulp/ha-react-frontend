@@ -150,12 +150,14 @@ class ReactWorkflowPanel extends LitElement {
                             // Info Button
                             {
                                 path: mdiInformationOutline,
+                                disabled: !workflow.attributes.workflow_id,
                                 label: this.react.localize("ui.panel.workflow.picker.actions.info"),
                                 action: () => this._showInfo(workflow),
                             },
                             // Trigger Button
                             {
                                 path: mdiPlay,
+                                disabled: !workflow.attributes.workflow_id,
                                 label: this.react.localize("ui.panel.workflow.picker.actions.trigger"),
                                 narrowOnly: true,
                                 action: () => this._trigger(workflow),
@@ -180,6 +182,7 @@ class ReactWorkflowPanel extends LitElement {
                                     workflow.state === "off"
                                         ? mdiPlayCircleOutline
                                         : mdiStopCircleOutline,
+                                disabled: !workflow.attributes.workflow_id,
                                 label:
                                     workflow.state === "off"
                                         ? this.react.localize("ui.panel.workflow.picker.actions.enable")
