@@ -10983,6 +10983,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.26.7":
+  version: 0.26.7
+  resolution: "magic-string@npm:0.26.7"
+  dependencies:
+    sourcemap-codec: ^1.4.8
+  checksum: 89b0d60cbb32bbf3d1e23c46ea93db082d18a8230b972027aecb10a40bba51be519ecce0674f995571e3affe917b76b09f59d8dbc9a1b2c9c4102a2b6e8a2b01
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
@@ -12908,7 +12917,7 @@ __metadata:
     lit: ^2.1.2
     lit-analyzer: ^1.2.1
     lodash.template: ^4.5.0
-    magic-string: ^0.25.7
+    magic-string: ^0.26.7
     map-stream: ^0.0.7
     marked: ^4.0.12
     memoize-one: ^5.2.1
