@@ -7,12 +7,11 @@ import { customElement, property } from "lit/decorators";
 import { HomeAssistant, Route } from "../homeassistant-frontend/src/types";
 import { navigate } from "../homeassistant-frontend/src/common/navigate";
 import { ReactElement } from "./react";
-import { LocationChangedEvent, ReactDispatchEvent } from "./data/common";
+import { LocationChangedEvent } from "./data/common";
 import { reactStyleVariables } from "./styles/variables";
 import { ReactStyles } from "./styles/react-common-style";
 import { mainWindow } from "../homeassistant-frontend/src/common/dom/get_main_window";
 import { isNavigationClick } from "../homeassistant-frontend/src/common/dom/is-navigation-click";
-import { getStatus, websocketSubscription } from "./data/websocket";
 import { applyThemesOnElement } from "../homeassistant-frontend/src/common/dom/apply_themes_on_element";
 import { fireEvent } from "../homeassistant-frontend/src/common/dom/fire_event";
 import { makeDialogManager } from "../homeassistant-frontend/src/dialogs/make-dialog-manager";
@@ -32,15 +31,7 @@ class ReactFrontend extends ReactElement {
         this.addEventListener("react-location-changed", (e) =>
             this._setRoute(e as LocationChangedEvent)
         );
-        
-        websocketSubscription(
-            this.hass,
-            () => this._updateProperties("status"),
-            ReactDispatchEvent.STATUS
-        );
-        
-        this._updateProperties();
-
+                
         if (this.route.path === "") {
             navigate("/react/entry", { replace: true });
         }
@@ -77,30 +68,6 @@ class ReactFrontend extends ReactElement {
         }
         if (oldHass.themes !== this.hass.themes) {
             this._applyTheme();
-        }
-    }
-
-    private async _updateProperties(prop = "all") {
-        const _updates: any = {};
-        const _fetch: any = {};
-
-        if (prop === "all") {
-            [
-                _fetch.status,
-            ] = await Promise.all([
-                getStatus(this.hass),
-            ]);
-        } else if (prop === "status") {
-            _fetch.status = await getStatus(this.hass);
-        }
-
-        Object.keys(_fetch).forEach((update) => {
-            if (_fetch[update] !== undefined) {
-                _updates[update] = _fetch[update];
-            }
-        });
-        if (_updates) {
-            this._updateReact(_updates);
         }
     }
 

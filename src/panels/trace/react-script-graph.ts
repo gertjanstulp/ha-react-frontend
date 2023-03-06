@@ -26,10 +26,11 @@ import { ActorConfig, ConditionConfig, DelayConfig, ParallelConfig, ReactorConfi
 import "../../../homeassistant-frontend/src/components/ha-icon-button"
 import "../../../homeassistant-frontend/src/components/trace/hat-graph-node";
 import "../../../homeassistant-frontend/src/components/trace/hat-graph-spacer";
-import { ensureArray } from "../../../homeassistant-frontend/src/common/ensure-array";
+// import { ensureArray } from "../../../homeassistant-frontend/src/common/ensure-array";
 import { ConditionTraceStep } from "../../../homeassistant-frontend/src/data/trace";
 
 import "./react-graph-branch"
+import { ensureArray } from "../../../homeassistant-frontend/src/common/array/ensure-array";
 
 export interface NodeInfo {
     path: string;
