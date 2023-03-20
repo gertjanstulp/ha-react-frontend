@@ -1,8 +1,8 @@
 const gulp = require("gulp");
-const del = require("del");
+const del = import("del");
 
-gulp.task("clean", (task) => {
-    del.sync([
+gulp.task("clean", async function (task) {
+    (await del).deleteSync([
         "./react_frontend/**/*.js", 
         "./react_frontend/**/*.json", 
         "./react_frontend/**/*.gz", 

@@ -3,16 +3,9 @@ import { Store } from "home-assistant-js-websocket/dist/store";
 import { stringCompare } from "../../homeassistant-frontend/src/common/string/compare";
 import { debounce } from "../../homeassistant-frontend/src/common/util/debounce";
 import { HomeAssistant } from "../../homeassistant-frontend/src/types";
-import { ReactDispatchEvent, Status } from "./common";
+import { ReactDispatchEvent } from "./common";
 import { Reaction, Run } from "./entities";
 import { WorkflowTrace, WorkflowTraceExtended } from "./trace";
-
-export const getStatus = async (hass: HomeAssistant) => {
-    const response = await hass.connection.sendMessagePromise<Status>({
-        type: "react/status",
-    });
-    return response;
-};
 
 export const websocketSubscription = (
     hass: HomeAssistant,
@@ -23,7 +16,6 @@ export const websocketSubscription = (
     type: "react/subscribe",
     signal: event,
 });
-
 
 interface TraceTypes {
     short: WorkflowTrace;
