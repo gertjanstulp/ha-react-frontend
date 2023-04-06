@@ -1,3 +1,3 @@
-var requireDir = require("require-dir");
+var requireDir = require("require-directory");
 
-requireDir("./build-scripts/gulp/");
+requireDir(module, "./build-scripts/gulp/");
