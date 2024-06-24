@@ -11,6 +11,7 @@ import "../../homeassistant-frontend/src/components/ha-svg-icon";
 import "../../homeassistant-frontend/src/layouts/ha-app-layout";
 import "../../homeassistant-frontend/src/panels/config/dashboard/ha-config-navigation";
 import "../../homeassistant-frontend/src/panels/config/ha-config-section";
+import "../../homeassistant-frontend/src/components/ha-top-app-bar-fixed";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { showDialogAbout } from "../dialogs/react-about-dialog";
@@ -34,13 +35,8 @@ export class ReactEntryPanel extends LitElement {
 
     protected render(): TemplateResult | void {
         return html`
-            <ha-app-layout>
-                <app-header fixed slot="header">
-                    <app-toolbar>
-                        <ha-menu-button .hass=${this.hass} .narrow=${this.narrow}></ha-menu-button>
-                        <div main-title>${this.narrow ? "React" : "React simplified automations"}</div>
-                    </app-toolbar>
-                </app-header>
+            <ha-top-app-bar-fixed>
+                <div slot="title">${this.narrow ? "React" : "React simplified automations"}</div>
                 <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide} full-width>
                     <ha-card outlined>
                         <mwc-list>
@@ -80,7 +76,7 @@ export class ReactEntryPanel extends LitElement {
                         </mwc-list>
                     </ha-card>
                 </ha-config-section>
-            </ha-app-layout>
+          </ha-top-app-bar-fixed>
         `;
     }
 
