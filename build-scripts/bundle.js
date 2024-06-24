@@ -2,11 +2,14 @@
 const path = require("path");
 const env = require("./env.js");
 const paths = require("./paths.js");
+const { dependencies } = require("../package.json");
+
+const BABEL_PLUGINS = path.join(__dirname, "babel-plugins");
 
 // Files from NPM Packages that should not be imported
 module.exports.ignorePackages = () => [
   // Part of yaml.js and only used for !!js functions that we don't use
-  require.resolve("esprima"),
+//   require.resolve("esprima"),
 ];
 
 // Files from NPM packages that we should replace with empty file
@@ -62,49 +65,78 @@ module.exports.terserOptions = () => ({
 module.exports.babelOptions = () => ({
     babelrc: false,
     compact: false,
+    assumptions: {
+        privateFieldsAsProperties: true,
+        setPublicClassFields: true,
+        setSpreadProperties: true,
+    },
+    browserslistEnv: "legacy",
     presets: [
         [
             "@babel/preset-env",
             {
-                useBuiltIns: "entry",
-                corejs: "3.15",
+                useBuiltIns: "usage",
+                corejs: dependencies["core-js"],
                 bugfixes: true,
+                shippedProposals: true,
             },
         ],
         "@babel/preset-typescript",
     ].filter(Boolean),
     plugins: [
         [
-            path.resolve(
-                paths.polymer_dir,
-                "build-scripts/babel-plugins/inline-constants-plugin.js"
-            ),
+            path.join(BABEL_PLUGINS, "inline-constants-plugin.cjs"),
             {
                 modules: ["@mdi/js"],
                 ignoreModuleNotFound: true,
             },
         ],
-        // Part of ES2018. Converts {...a, b: 2} to Object.assign({}, a, {b: 2})
+        // Import helpers and regenerator from runtime package
         [
-            "@babel/plugin-proposal-object-rest-spread",
-            { loose: true, useBuiltIns: true },
+          "@babel/plugin-transform-runtime",
+          { version: dependencies["@babel/runtime"] },
         ],
-        // Only support the syntax, Webpack will handle it.
-        "@babel/plugin-syntax-import-meta",
-        "@babel/plugin-syntax-dynamic-import",
-        "@babel/plugin-syntax-top-level-await",
-        "@babel/plugin-proposal-optional-chaining",
-        "@babel/plugin-proposal-nullish-coalescing-operator",
+        // Support  some proposals still in TC39 process
         ["@babel/plugin-proposal-decorators", { decoratorsBeforeExport: true }],
-        ["@babel/plugin-proposal-private-methods", { loose: true }],
-        ["@babel/plugin-proposal-private-property-in-object", { loose: true }],
-        ["@babel/plugin-proposal-class-properties", { loose: true }],
     ].filter(Boolean),
     exclude: [
         // \\ for Windows, / for Mac OS and Linux
         /node_modules[\\/]core-js/,
         /node_modules[\\/]webpack[\\/]buildin/,
-    ]
+    ],
+    overrides: [
+        // {
+        //     // Add plugin to inject various polyfills, excluding the polyfills
+        //     // themselves to prevent self-injection.
+        //     plugins: [
+        //         [
+        //             path.join(BABEL_PLUGINS, "custom-polyfill-plugin.js"),
+        //             { method: "usage-global" },
+        //         ],
+        //     ],
+        //     exclude: [
+        //         path.join(paths.polymer_dir, "src/resources/polyfills"),
+        //         ...[
+        //             "@formatjs/(?:ecma402-abstract|intl-\\w+)",
+        //             "@lit-labs/virtualizer/polyfills",
+        //             "@webcomponents/scoped-custom-element-registry",
+        //             "element-internals-polyfill",
+        //             "proxy-polyfill",
+        //             "unfetch",
+        //         ].map((p) => new RegExp(`/node_modules/${p}/`)),
+        //     ],
+        // },
+        {
+            // Use unambiguous for dependencies so that require() is correctly injected into CommonJS files
+            // Exclusions are needed in some cases where ES modules have no static imports or exports, such as polyfills
+            sourceType: "unambiguous",
+            include: /\/node_modules\//,
+            exclude: [
+                "element-internals-polyfill",
+                "@?lit(?:-labs|-element|-html)?",
+            ].map((p) => new RegExp(`/node_modules/${p}/`)),
+        },
+    ],
 });
 
 const outputPath = (outputRoot) =>

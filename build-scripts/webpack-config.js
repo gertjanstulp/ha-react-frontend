@@ -119,6 +119,7 @@ const createWebpackConfig = ({
         resolve: {
             extensions: [".ts", ".js", ".json"],
             alias: {
+                "lit/static-html$": "lit/static-html.js",
                 "lit/decorators$": "lit/decorators.js",
                 "lit/directive$": "lit/directive.js",
                 "lit/directives/until$": "lit/directives/until.js",
@@ -128,9 +129,14 @@ const createWebpackConfig = ({
                 "lit/directives/guard$": "lit/directives/guard.js",
                 "lit/directives/cache$": "lit/directives/cache.js",
                 "lit/directives/repeat$": "lit/directives/repeat.js",
+                "lit/directives/live$": "lit/directives/live.js",
                 "lit/polyfill-support$": "lit/polyfill-support.js",
-                "@lit-labs/virtualizer/layouts/grid": 
+                "@lit-labs/virtualizer/layouts/grid":
                 "@lit-labs/virtualizer/layouts/grid.js",
+                "@lit-labs/virtualizer/polyfills/resize-observer-polyfill/ResizeObserver":
+                "@lit-labs/virtualizer/polyfills/resize-observer-polyfill/ResizeObserver.js",
+                "@lit-labs/observers/resize-controller":
+                "@lit-labs/observers/resize-controller.js",
             },
         },
         output: {

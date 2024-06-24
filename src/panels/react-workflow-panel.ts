@@ -7,8 +7,8 @@ import {
     mdiStopCircleOutline,
     mdiTransitConnection,
 } from "@mdi/js";
-import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
-import "../../homeassistant-frontend/src/components/ha-chip";
+// import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
+// import "../../homeassistant-frontend/src/components/ha-chip-set";
 import "../../homeassistant-frontend/src/components/ha-fab";
 import "../../homeassistant-frontend/src/components/ha-icon-button";
 import "../../homeassistant-frontend/src/components/ha-icon-overflow-menu";
@@ -103,18 +103,18 @@ class ReactWorkflowPanel extends LitElement {
                     sortable: true,
                     width: "20%",
                     title: this.react.localize("ui.panel.workflow.picker.headers.last_triggered"),
-                    template: (last_triggered) => html`
-                    ${last_triggered
-                        ? formatDateTime(new Date(last_triggered), this.hass.locale)
-                        : this.react.localize("ui.components.relative_time.never")}
-                    `,
+                    template: (workflow) => html`
+                        ${workflow.last_triggered
+                            ? formatDateTime(new Date(workflow.last_triggered), this.hass.locale)
+                            : this.react.localize("ui.components.relative_time.never")}
+                        `,
                 };
             }
 
             columns.disabled = this.narrow
                 ? {
                     title: "",
-                    template: (_, workflow: WorkflowEntity) =>
+                    template: (workflow: WorkflowEntity) =>
                         workflow.state == "off"
                             ? html`
                                 <paper-tooltip animation-delay="0" position="left">
@@ -129,12 +129,17 @@ class ReactWorkflowPanel extends LitElement {
                 : {
                     width: "20%",
                     title: "",
-                    template: (_, workflow: WorkflowEntity) =>
+                    template: (workflow: WorkflowEntity) =>
                         workflow.state == "off"
                             ? html`
-                                <ha-chip>
-                                    ${this.react.localize("ui.panel.workflow.picker.badges.disabled")}
-                                </ha-chip>`
+                                <ha-chip-set>
+                                    <ha-label
+                                        dense
+                                        role="button"
+                                        tabindex="0"
+                                        .item=${this.react.localize("ui.panel.workflow.picker.badges.disabled")}
+                                    >
+                                </ha-chip-set>`
                             : "",
                 };
 
@@ -142,7 +147,7 @@ class ReactWorkflowPanel extends LitElement {
                 title: "",
                 width: this.narrow ? undefined : "10%",
                 type: "overflow-menu",
-                template: (_: string, workflow: any) =>
+                template: (workflow: any) =>
                     html`
                         <ha-icon-overflow-menu
                         .hass=${this.hass}

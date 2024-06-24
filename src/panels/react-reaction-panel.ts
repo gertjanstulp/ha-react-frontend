@@ -4,7 +4,7 @@ import {
     mdiPlay,
 } from "@mdi/js";
 import "../../homeassistant-frontend/src/components/entity/ha-entity-toggle";
-import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
+// import "../../homeassistant-frontend/src/components/ha-button-related-filter-menu";
 import "../../homeassistant-frontend/src/components/ha-fab";
 import "../../homeassistant-frontend/src/components/ha-icon-button";
 import "../../homeassistant-frontend/src/components/ha-svg-icon";

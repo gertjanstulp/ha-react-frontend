@@ -8,12 +8,13 @@ import "../../homeassistant-frontend/src/components/ha-card";
 import "../../homeassistant-frontend/src/components/ha-clickable-list-item";
 import "../../homeassistant-frontend/src/components/ha-menu-button";
 import "../../homeassistant-frontend/src/components/ha-svg-icon";
-import "../../homeassistant-frontend/src/layouts/ha-app-layout";
+// import "../../homeassistant-frontend/src/layouts/ha-app-layout";
 import "../../homeassistant-frontend/src/panels/config/dashboard/ha-config-navigation";
 import "../../homeassistant-frontend/src/panels/config/ha-config-section";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { showDialogAbout } from "../dialogs/react-about-dialog";
+import { navigate } from "../../homeassistant-frontend/src/common/navigate";
 import "../custom/ha-top-app-bar-fixed-custom"
 
 import { React } from "../data/react"
@@ -39,41 +40,13 @@ export class ReactEntryPanel extends LitElement {
                 <div slot="title">${this.narrow ? "React" : "React simplified automations"}</div>
                 <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide} full-width>
                     <ha-card outlined>
-                        <mwc-list>
-                            ${this.react.sections.map(
-                                (page) => html`
-                                    <ha-clickable-list-item
-                                        graphic="avatar"
-                                        twoline
-                                        .hasMeta=${!this.narrow}
-                                        href=${page.path}>
-                                        <div
-                                            slot="graphic"
-                                            class=${page.iconColor ? "icon-background" : ""}
-                                            .style="background-color: ${page.iconColor || "undefined"}">
-                                            <ha-svg-icon .path=${page.iconPath}></ha-svg-icon>
-                                        </div>
-                                        <span>${page.name}</span>
-                                        <span slot="secondary">${page.description}</span>
-                                        ${!this.narrow ? html`<ha-icon-next slot="meta"></ha-icon-next>` : ""}
-                                    </ha-clickable-list-item>
-                                `
-                            )}
-                            <ha-clickable-list-item
-                                graphic="avatar"
-                                twoline
-                                @click=${this._openAboutDialog}
-                                disableHref>
-                                <div
-                                    class="icon-background"
-                                    slot="graphic"
-                                    style="background-color: rgb(74, 89, 99)">
-                                    <ha-svg-icon .path=${mdiInformation}></ha-svg-icon>
-                                </div>
-                                <span>${this.react.localize(`sections.about.title`)}</span>
-                                <span slot="secondary">${this.react.localize(`sections.about.description`)}</span>
-                            </ha-clickable-list-item>
-                        </mwc-list>
+                        <ha-config-navigation
+                            .hass=${this.hass}
+                            .narrow=${this.narrow}
+                            .showAdvanced=false
+                            .pages=${this.react.sections}
+
+                        ></ha-config-navigation>
                     </ha-card>
                 </ha-config-section>
           </ha-top-app-bar-fixed-custom>
@@ -147,11 +120,6 @@ export class ReactEntryPanel extends LitElement {
                 }
                 .icon-background ha-svg-icon {
                   color: #fff;
-                }
-                ha-clickable-list-item {
-                  cursor: pointer;
-                  font-size: 16px;
-                  padding: 0;
                 }
             `,
         ];
