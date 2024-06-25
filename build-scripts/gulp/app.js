@@ -20,7 +20,8 @@ gulp.task(
         "generate-translations",
         "gen-icons-json",
         "dummies",
-        "webpack-watch"
+        "webpack-watch",
+        "entrypoint"
     )
 );
 
@@ -35,6 +36,7 @@ gulp.task(
         "gen-icons-json",
         "dummies",
         "webpack-prod",
+        "entrypoint",
         // Don't compress running tests
         ...(["compress"]),
     )
