@@ -21,7 +21,6 @@ gulp.task(
         "gen-icons-json",
         "dummies",
         "webpack-watch",
-        "entrypoint"
     )
 );
 
@@ -36,7 +35,6 @@ gulp.task(
         "gen-icons-json",
         "dummies",
         "webpack-prod",
-        "entrypoint",
         // Don't compress running tests
         ...(["compress"]),
     )
