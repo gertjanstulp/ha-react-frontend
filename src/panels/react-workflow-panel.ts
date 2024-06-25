@@ -3,6 +3,7 @@ import {
     mdiInformationOutline,
     mdiPlay,
     mdiPlayCircleOutline,
+    mdiSitemapOutline,
     mdiStopCircleOutline,
     mdiTransitConnection,
 } from "@mdi/js";
@@ -73,7 +74,7 @@ class ReactWorkflowPanel extends LitElement {
                     label: this.react.localize("ui.panel.workflow.picker.headers.state"),
                     type: "icon",
                     template: (_, workflow) =>
-                        html`<ha-state-icon .state=${workflow}></ha-state-icon>`,
+                        html`<ha-svg-icon .path=${mdiSitemapOutline}></ha-svg-icon>`,
                 },
                 name: {
                     title: this.react.localize("ui.panel.workflow.picker.headers.name"),

@@ -11,10 +11,10 @@ import "../../homeassistant-frontend/src/components/ha-svg-icon";
 import "../../homeassistant-frontend/src/layouts/ha-app-layout";
 import "../../homeassistant-frontend/src/panels/config/dashboard/ha-config-navigation";
 import "../../homeassistant-frontend/src/panels/config/ha-config-section";
-import "../../homeassistant-frontend/src/components/ha-top-app-bar-fixed";
 import { haStyle } from "../../homeassistant-frontend/src/resources/styles";
 import { HomeAssistant, Route } from "../../homeassistant-frontend/src/types";
 import { showDialogAbout } from "../dialogs/react-about-dialog";
+import "../custom/ha-top-app-bar-fixed-custom"
 
 import { React } from "../data/react"
 // import { reactSections } from "../react-router";
@@ -35,7 +35,7 @@ export class ReactEntryPanel extends LitElement {
 
     protected render(): TemplateResult | void {
         return html`
-            <ha-top-app-bar-fixed>
+            <ha-top-app-bar-fixed-custom>
                 <div slot="title">${this.narrow ? "React" : "React simplified automations"}</div>
                 <ha-config-section .narrow=${this.narrow} .isWide=${this.isWide} full-width>
                     <ha-card outlined>
@@ -76,7 +76,7 @@ export class ReactEntryPanel extends LitElement {
                         </mwc-list>
                     </ha-card>
                 </ha-config-section>
-          </ha-top-app-bar-fixed>
+          </ha-top-app-bar-fixed-custom>
         `;
     }
 
